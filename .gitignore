@@ -21,6 +21,6 @@ build/
 cmake-build-debug/
 CMakeFiles/
 *.dir/
-.vs/
+*.vs
 x86/
 x64/
