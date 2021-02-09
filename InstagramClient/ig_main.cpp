@@ -3,7 +3,7 @@
 
 int main(int argc, char* argv[], char* envp[])
 {
-	ig::ig_login Login;
+	ig::settings::ig_login Login;
 	//Login.add_credentials();
 	//Login.get_credentials(None);
 	//Login.get_credentials("artarchvogue1");
