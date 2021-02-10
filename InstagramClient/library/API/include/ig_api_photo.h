@@ -1,35 +1,36 @@
 #pragma once
 
 #define None ""
+#define NULL_map {"", ""}
 #include <string>
 #include <map>
 
 namespace ig
 {
-	namespace api
+	namespace API
 	{
-		namespace photo
+		namespace PHOTO
 		{
-			typedef class ig_api_photo
+			typedef class photo
 			{
 			public:
 				//CTOR and DCTOR
-				ig_api_photo();
-				~ig_api_photo();
+				photo();
+				~photo();
 				//Main functions section
-				void download_photo(const std::string& media_id, const std::string& filename, bool media = false, const std::string& folder = "photos");
-				void compatible_spect_ratio(float size);
-				void configure_photo(const std::string& upload_id, const std::string& photo, const std::string& caption);
-				void upload_photo(const std::string& photo, const std::string& from_video, bool force_resize, std::map<std::string, std::string> options = {}, const std::string & caption = None, const std::string & upload_id = None );
-				void get_image_size(const std::string& fname);
-				void resize_image(const std::string& fname);
-				void stories_shaper(const std::string& fname);
+				void download_photo(const std::string& _media_id, const std::string& _filename, bool _media = false, const std::string& _folder = "photos");
+				void compatible_spect_ratio(float _size);
+				void configure_photo(const std::string& _upload_id, const std::string& _photo, const std::string& _caption);
+				void upload_photo(const std::string& _photo = None, const std::string& _caption = None, const std::string& _upload_id = None, bool _from_video = false, bool _force_resize = false, std::map<std::string, std::string> _options = NULL_map);
+				void get_image_size(const std::string& _fname);
+				void resize_image(const std::string& _fname);
+				void stories_shaper(const std::string& _fname);
 				//Getter and Setter
-				void get_media_info(const std::string& media_id);
+				void get_media_info(const std::string& _media_id);
 			protected:
 			private:
 				std::string media_info;
-			}ig_api_photo;
+			}photo;
 		}
 	}
 }
