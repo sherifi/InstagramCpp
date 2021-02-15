@@ -8,9 +8,9 @@ namespace ig
 	namespace settings
 	{
 
-		static const std::string DEFAULT_DEVICE = "samsung_galaxy_s9_plus";
+		static const char* DEFAULT_DEVICE = "samsung_galaxy_s9_plus";
 
-		static const std::map<std::string, std::map<std::string, std::string>> DEVICES = {
+		static const std::map<const char*, std::map<const char*, const char*>> DEVICES = {
 			{
 				//Released on March 2016
 				"samsung_galaxy_s7",
@@ -118,7 +118,7 @@ namespace ig
 			}
 		};
 
-		static const std::map<std::string, std::map<std::string, std::string>> DEVICES_EXPERIMENTAL = {
+		static const std::map<const char*, std::map<const char*, const char*>> DEVICES_EXPERIMENTAL = {
 			{
 				"device_001",
 				{

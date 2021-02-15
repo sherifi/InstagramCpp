@@ -4,13 +4,24 @@ namespace ig
 {
 	namespace API
 	{
-		API::API(
+		template <typename T>
+		API<T>::API(
 			log_Func_Callback,
-			const std::string& _device,
-			const std::string& _base_path,
+			T _device,
+			T _base_path,
 			bool _is_logged_in,
-			const std::string& _username,
-			const std::string& _password
+			T _username,
+			T _password
+		);
+
+		template <>
+		API<std::string&&>::API(
+			log_Func_Callback,
+			std::string&& _device,
+			std::string&& _base_path,
+			bool _is_logged_in,
+			std::string&& _username,
+			std::string&& _password
 		)
 		{
 			if (_device.empty())
@@ -37,10 +48,17 @@ namespace ig
 				FILE_OUT.open(*conf_PATH);
 			}
 			FILE_OUT.close();
-			uuid = ig::settings::uuid::generate_uuid_v4();
+			uuid = utility.generate_uuid_v4();
 			delete conf_PATH;
 		}
-		std::string API::generate_user_agent()
+
+		template <typename T>
+		T API<T>::generate_user_agent()
+		{
+		}
+
+		template <>
+		std::string&& API<std::string&&>::generate_user_agent()
 		{
 			user_agent = ig::settings::USER_AGENT_BASE;
 			user_agent.replace(user_agent.find("instagram_version"), sizeof("instagram_version") - 1, device_settings.at("instagram_version"));
@@ -52,32 +70,67 @@ namespace ig
 			user_agent.replace(user_agent.find("device"), sizeof("device") - 1, device_settings.at("device"));
 			user_agent.replace(user_agent.find("model"), sizeof("model") - 1, device_settings.at("model"));
 			user_agent.replace(user_agent.find("cpu"), sizeof("cpu") - 1, device_settings.at("cpu"));
-			return user_agent;
+			return std::move(user_agent);
 		}
-		void API::set_user(const std::string& _username, const std::string& _password)
+
+		template <typename T>
+		void API<T>::set_user(T _username, T _password)
+		{
+		}
+
+		template <>
+		void API<std::string&&>::set_user(std::string&& _username, std::string&& _password)
 		{
 			username = _username;
 			password = _password;
 		}
-		std::string API::get_proxy()
+
+		template <typename T>
+		T API<T>::get_proxy()
 		{
-			return proxy;
 		}
-		void API::set_proxy(const std::string& _proxy)
+
+		template <>
+		std::string&& API<std::string&&>::get_proxy()
+		{
+			return std::move(proxy);
+		}
+
+		template <typename T>
+		void API<T>::set_proxy(T _proxy)
+		{
+		}
+
+		template <>
+		void API<std::string&&>::set_proxy(std::string&& _proxy)
 		{
 			proxy = _proxy;
 		}
-		std::string API::get_proxy(const std::vector<std::string>& _proxy_list)
+
+		template <typename T>
+		T API<T>::get_proxy(const std::vector<T>& _proxy_list)
 		{
-			return _proxy_list[std::rand() % _proxy_list.size()];
 		}
-		bool API::login(const std::string& _username, const std::string& _password, bool _force, const std::string& _proxy, bool _use_cookie, const std::string& _cookie_fname, bool _is_threaded)
+
+		template <>
+		std::string&& API<std::string&&>::get_proxy(const std::vector<std::string&&>& _proxy_list)
+		{
+			return std::move(_proxy_list[std::rand() % _proxy_list.size()]);
+		}
+
+		template <typename T>
+		bool API<T>::login(T _username, T _password, bool _force, T _proxy, bool _use_cookie, T _cookie_fname, bool _is_threaded)
+		{
+		}
+
+		template <>
+		bool API<std::string&&>::login(std::string&& _username, std::string&& _password, bool _force, std::string&& _proxy, bool _use_cookie, std::string&& _cookie_fname, bool _is_threaded)
 		{
 			proxy = _proxy;
 			logger.Log(ig::settings::INFO, "Setup the proxy.");
 			if (_use_cookie)
 			{
-				return check_cookie(_username, _password, _proxy);
+				return check_cookie(std::move(_username), std::move(_password), std::move(_proxy));
 			}
 			if ((!_use_cookie) && ((!is_logged_in) || (_force)))
 			{
@@ -183,7 +236,14 @@ namespace ig
 				delete url;
 			}
 		}
-		bool check_cookie(const std::string& _username, const std::string& _password, const std::string& _proxy)
+
+		template <typename T>
+		bool API<T>::check_cookie(T _username, T _password, T _proxy)
+		{
+		}
+
+		template <>
+		bool API<std::string&&>::check_cookie(std::string&& _username, std::string&& _password, std::string&& _proxy)
 		{
 			if (_password == None)
 			{
@@ -214,7 +274,13 @@ namespace ig
 			}
 		}
 
-		bool API::load_cookie(const std::string& _cookie_fname)
+		template <typename T>
+		bool API<T>::load_cookie(T _cookie_fname)
+		{
+		}
+
+		template <>
+		bool API<std::string&&>::load_cookie(std::string&& _cookie_fname)
 		{
 			try
 			{
@@ -251,7 +317,13 @@ namespace ig
 			}
 		}
 
-		bool API::save_cookie(const std::string& _fname)
+		template <typename T>
+		bool API<T>::save_cookie(T _fname)
+		{
+		}
+
+		template <>
+		bool API<std::string&&>::save_cookie(std::string&& _fname)
 		{
 			FILE_OUT.open(_fname);
 			if (FILE_OUT.is_open())
@@ -260,19 +332,32 @@ namespace ig
 			}
 		}
 
-		bool API::save_successful_login(bool _use_cookie, const std::string& _cookie_fname)
+		template <typename T>
+		bool API<T>::save_successful_login(bool _use_cookie, T _cookie_fname)
+		{
+		}
+
+		template <>
+		bool API<std::string&&>::save_successful_login(bool _use_cookie, std::string&& _cookie_fname)
 		{
 			is_logged_in = true;
 			logger.Log(ig::settings::INFO, "Logged-in successfully as " + username + " !");
 			if (_use_cookie)
 			{
-				save_cookie(_cookie_fname);
+				save_cookie(std::move(_cookie_fname));
 				logger.Log(ig::settings::INFO, "Saved cookie!");
 			}
 			return true;
 		}
 
-		bool API::save_failed_password()
+		template <typename T>
+		bool API<T>::save_failed_password()
+		{
+
+		}
+
+		template <>
+		bool API<std::string&&>::save_failed_password()
 		{
 			std::cout << "Username or password is incorrect." << std::endl;
 			logger.Log(ig::settings::INFO, "Username or password is incorrect.");
@@ -289,7 +374,14 @@ namespace ig
 			}
 		}
 
-		bool API::save_failed_login()
+		template <typename T>
+		bool API<T>::save_failed_login()
+		{
+
+		}
+
+		template <>
+		bool API<std::string&&>::save_failed_login()
 		{
 			std::cout << "Username or password is incorrect." << std::endl;
 			logger.Log(ig::settings::INFO, "Username or password is incorrect.");
@@ -298,7 +390,14 @@ namespace ig
 			delete Login;
 		}
 
-		bool API::solve_challenge()
+		template <typename T>
+		bool API<T>::solve_challenge()
+		{
+
+		}
+
+		template <>
+		bool API<std::string&&>::solve_challenge()
 		{
 			challenge_url = last_json['challenge']['api_path'][1:];
 			try
@@ -351,7 +450,14 @@ namespace ig
 			return false;
 		}
 
-		std::vector<std::string> API::get_challenge_choices()
+		template <typename T>
+		std::vector<T> API<T>::get_challenge_choices()
+		{
+
+		}
+
+		template <>
+		std::vector<std::string&&> API<std::string&&>::get_challenge_choices()
 		{
 			std::vector<std::string>* choices = new std::vector<std::string>(get_challenge_choices());
 			if (last_json.get("step_name", "") == "select_verify_method")
@@ -392,7 +498,14 @@ namespace ig
 			delete choices;
 		}
 
-		bool API::logout()
+		template <typename T>
+		bool API<T>::logout()
+		{
+
+		}
+
+		template <>
+		bool API<std::string&&>::logout()
 		{
 			if (!is_logged_in)
 			{
@@ -405,7 +518,14 @@ namespace ig
 			return (!is_logged_in);
 		}
 
-		std::string API::set_proxy()
+		template <typename T>
+		T API<T>::set_proxy()
+		{
+
+		}
+
+		template <>
+		std::string&& API<std::string&&>::set_proxy()
 		{
 			if (proxy != None)
 			{
@@ -424,7 +544,14 @@ namespace ig
 			}
 		}
 
-		bool API::send_request(const std::string& _endpoint, const std::string& _post, bool _login, bool _with_signature, const std::string& _headers)
+		template <typename T>
+		bool API<T>::send_request(T _endpoint, T _post, bool _login, bool _with_signature, T _headers)
+		{
+
+		}
+
+		template <>
+		bool API<std::string&&>::send_request(std::string&& _endpoint, std::string&& _post, bool _login, bool _with_signature, std::string&& _headers)
 		{
 			if (!is_logged_in && !_login)
 			{
@@ -581,7 +708,14 @@ namespace ig
 			}
 		}
 
-		std::map<std::string, std::string> API::json_data(const std::map<std::string, std::string>& _data)
+		template <typename T>
+		std::map<T, T> API<T>::json_data(const std::map<T, T>& _data)
+		{
+
+		}
+
+		template <>
+		std::map<std::string&&, std::string&&> API<std::string&&>::json_data(const std::map<std::string&&, std::string&&>& _data)
 		{
 			TEMP_MAP_PTR->clear();
 			TEMP_MAP_PTR = new std::map<std::string, std::string>(_data);
@@ -593,7 +727,14 @@ namespace ig
 			return json.dummps(*TEMP_MAP_PTR);
 		}
 
-		bool API::sync_features()
+		template <typename T>
+		bool API<T>::sync_features()
+		{
+
+		}
+
+		template <>
+		bool API<std::string&&>::sync_features()
 		{
 			DATA->clear();
 			*DATA = json_data({ {"id", user_id}, {"experiments", ig::settings::EXPERIMENTS[0]} });
@@ -602,13 +743,21 @@ namespace ig
 			return send_request(*URL, *DATA);
 		}
 
-		bool API::auto_complete_user_list()
+		template <typename T>
+		bool API<T>::auto_complete_user_list()
+		{
+
+		}
+
+		template <>
+		bool API<std::string&&>::auto_complete_user_list()
 		{
 			URL->clear();
 			*URL = ig::settings::ENDPOINTS::auto_complete_user_list;
 			return send_request(*URL);
 		}
 
+		template <typename T>
 		bool API::get_timeline_feed()
 		{
 			//RETURN 8 medias from timeline feed of logged user.
@@ -620,6 +769,7 @@ namespace ig
 			return send_request(*URL, *DATA, false , false, "");
 		}
 
+		template <typename T>
 		bool API::get_megaphone_log()
 		{
 			URL->clear();
@@ -627,6 +777,7 @@ namespace ig
 			return send_request(*URL);
 		}
 
+		template <typename T>
 		bool API::expose()
 		{
 			DATA->clear();
@@ -648,6 +799,7 @@ namespace ig
 			This is the simplest request object.
 			@return Boolean
 		*/
+		template <typename T>
 		void API::upload_photo(const std::string& _photo, const std::string& _caption, const std::string& _upload_id, bool _from_video, bool _force_resize, const std::map<std::string, std::string>& _options)
 		{
 			PHOTO_ptr = new ig::API::PHOTO::photo();
@@ -655,6 +807,7 @@ namespace ig
 			PHOTO_ptr = nullptr;
 		}
 
+		template <typename T>
 		void API::download_photo(const std::string& _media_id, const std::string& _filename, bool _media, const std::string& _folder)
 		{
 			PHOTO_ptr = new ig::API::PHOTO::photo();
@@ -662,6 +815,7 @@ namespace ig
 			PHOTO_ptr = nullptr;
 		}
 
+		template <typename T>
 		void API::configure_photo(const std::string& _upload_id, const std::string& _photo, const std::string& _caption)
 		{
 			PHOTO_ptr = new ig::API::PHOTO::photo();
@@ -669,6 +823,7 @@ namespace ig
 			PHOTO_ptr = nullptr;
 		}
 
+		template <typename T>
 		void API::download_story(const std::string& _filename, const std::string& _story_url, const std::string& _username)
 		{
 			STORY_ptr = new ig::API::STORY::story();
@@ -676,6 +831,7 @@ namespace ig
 			STORY_ptr = nullptr;
 		}
 
+		template <typename T>
 		void API::upload_story_photo(const std::string& _photo, const std::string& _upload_id)
 		{
 			STORY_ptr = new ig::API::STORY::story();
@@ -683,6 +839,7 @@ namespace ig
 			STORY_ptr = nullptr;
 		}
 
+		template <typename T>
 		void API::configure_story(const std::string& _photo, const std::string& _upload_id)
 		{
 			STORY_ptr = new ig::API::STORY::story();
@@ -702,6 +859,7 @@ namespace ig
 			@return           Object with state of uploading to Instagram(or False)
 		*/
 
+		template <typename T>
 		void API::upload_video(const std::string& _video, const std::string& _caption, const std::string& _upload_id, const std::string& _thumbnail, const std::map<std::string, std::string>& _options)
 		{
 			VIDEO_ptr = new ig::API::VIDEO::video();
@@ -709,6 +867,7 @@ namespace ig
 			VIDEO_ptr = nullptr;
 		}
 
+		template <typename T>
 		void API::download_video(const std::string& _media_id, const std::string& _filename, bool _media, const std::string& _folder)
 		{
 			VIDEO_ptr = new ig::API::VIDEO::video();
@@ -729,6 +888,7 @@ namespace ig
 			Designed to reduce the number of function arguments!
 			This is the simplest request object.
 		*/
+		template <typename T>
 		void API::configure_video(const std::string& _upload_id, const std::string& _video, const std::string& _thumbnail, const std::string& _width, const std::string& _height, const std::string& _duration, const std::string& _caption, const std::map<std::string, std::string>& _options)
 		{
 			VIDEO_ptr = new ig::API::VIDEO::video();
@@ -736,6 +896,7 @@ namespace ig
 			VIDEO_ptr = nullptr;
 		}
 
+		template <typename T>
 		bool API::edit_media(const std::string& _media_id, const std::string& _captionText)
 		{
 			DATA->clear();
@@ -748,6 +909,7 @@ namespace ig
 			return send_request(*URL, *DATA);
 		}
 
+		template <typename T>
 		bool API::remove_self_tag(const std::string& _media_id)
 		{
 			DATA->clear();
@@ -760,6 +922,7 @@ namespace ig
 			return send_request(*URL, *DATA);
 		}
 
+		template <typename T>
 		bool API::media_info(const std::string& _media_id)
 		{
 			URL->clear();
@@ -770,6 +933,7 @@ namespace ig
 			return send_request(*URL);
 		}
 
+		template <typename T>
 		bool API::archive_media(const std::map<std::string, std::string>& _media, bool _undo)
 		{
 			DATA->clear();
@@ -796,6 +960,7 @@ namespace ig
 			return send_request(*URL, *DATA);
 		}
 
+		template <typename T>
 		bool API::delete_media(const std::map<std::string, std::string>& _media)
 		{
 			DATA->clear();
@@ -808,6 +973,7 @@ namespace ig
 			return send_request(*URL, *DATA);
 		}
 
+		template <typename T>
 		bool API::change_password(const std::string& _new_password)
 		{
 			DATA->clear();
@@ -817,6 +983,7 @@ namespace ig
 			return send_request(*URL, *DATA);
 		}
 
+		template <typename T>
 		bool API::explore()
 		{
 			URL->clear();
@@ -824,6 +991,7 @@ namespace ig
 			return send_request(*URL);
 		}
 
+		template <typename T>
 		bool API::comment(const std::string& _media_id, const std::string& _comment_text)
 		{
 			DATA->clear();
@@ -836,6 +1004,7 @@ namespace ig
 			return send_request(*URL, *DATA);
 		}
 
+		template <typename T>
 		bool API::reply_to_comment(const std::string& _media_id, const std::string& _comment_text, const std::string& _parent_comment_id)
 		{
 			DATA->clear();
@@ -848,6 +1017,7 @@ namespace ig
 			return send_request(*URL, *DATA);
 		}
 
+		template <typename T>
 		bool API::delete_comment(const std::string& _media_id, const std::string& _comment_id)
 		{
 			DATA->clear();
@@ -862,6 +1032,7 @@ namespace ig
 			return send_request(*URL, *DATA);
 		}
 
+		template <typename T>
 		bool API::get_username_info(const std::string& _user_id)
 		{
 			DATA->clear();
@@ -874,11 +1045,13 @@ namespace ig
 			return send_request(*URL, *DATA);
 		}
 
+		template <typename T>
 		bool API::get_self_username_info()
 		{
 			get_username_info(user_id);
 		}
 
+		template <typename T>
 		bool API::get_recent_activity()
 		{
 			DATA->clear();
@@ -888,6 +1061,7 @@ namespace ig
 			return send_request(*URL, *DATA);
 		}
 
+		template <typename T>
 		bool API::get_following_recent_activity()
 		{
 			DATA->clear();
@@ -897,6 +1071,7 @@ namespace ig
 			return send_request(*URL, *DATA);
 		}
 
+		template <typename T>
 		bool API::getv2Inbox()
 		{
 			DATA->clear();
@@ -906,6 +1081,7 @@ namespace ig
 			return send_request(*URL, *DATA);
 		}
 
+		template <typename T>
 		bool API::get_user_tags(const std::string& _user_id)
 		{
 			DATA->clear();
@@ -920,6 +1096,7 @@ namespace ig
 			return send_request(*URL, *DATA);
 		}
 
+		template <typename T>
 		bool API::tag_feed(const std::string& _tag)
 		{
 			DATA->clear();
@@ -934,6 +1111,7 @@ namespace ig
 			return send_request(*URL, *DATA);
 		}
 
+		template <typename T>
 		bool API::get_comment_likers(const std::string& _comment_id)
 		{
 			DATA->clear();
@@ -946,6 +1124,7 @@ namespace ig
 			return send_request(*URL, *DATA);
 		}
 
+		template <typename T>
 		bool API::get_media_likers(const std::string& _media_id)
 		{
 			DATA->clear();
@@ -958,6 +1137,7 @@ namespace ig
 			return send_request(*URL, *DATA);
 		}
 
+		template <typename T>
 		bool API::get_geo_media(const std::string& _user_id)
 		{
 			DATA->clear();
@@ -970,11 +1150,13 @@ namespace ig
 			return send_request(*URL, *DATA);
 		}
 
+		template <typename T>
 		bool API::get_self_geo_media()
 		{
 			get_geo_media(user_id);
 		}
 
+		template <typename T>
 		bool API::sync_from_adress_book(const std::string& _contacts)
 		{
 			DATA->clear();
@@ -984,6 +1166,7 @@ namespace ig
 			return send_request(*URL, *DATA);
 		}
 
+		template <typename T>
 		bool API::get_timeline()
 		{
 			URL->clear();
@@ -993,6 +1176,7 @@ namespace ig
 			return send_request(*URL, *DATA);
 		}
 
+		template <typename T>
 		bool API::get_user_feed(const std::string& _user_id, const std::string& _max_id, const std::string& _min_timestamp)
 		{
 			DATA->clear();
@@ -1011,11 +1195,13 @@ namespace ig
 			return send_request(*URL, *DATA);
 		}
 
+		template <typename T>
 		bool API::get_self_user_feed(const std::string& _max_id, const std::string& _min_timestamp)
 		{
 			get_user_feed(user_id, _max_id, _min_timestamp);
 		}
 
+		template <typename T>
 		bool API::get_hashtag_feed(const std::string& _hashtag, const std::string& _max_id)
 		{
 			DATA->clear();
@@ -1032,6 +1218,7 @@ namespace ig
 			return send_request(*URL, *DATA);
 		}
 
+		template <typename T>
 		bool API::get_location_feed(const std::string& _location_id, const std::string& _max_id)
 		{
 			DATA->clear();
@@ -1048,6 +1235,7 @@ namespace ig
 			return send_request(*URL, *DATA);
 		}
 
+		template <typename T>
 		bool API::get_popular_feed()
 		{
 			DATA->clear();
@@ -1060,6 +1248,7 @@ namespace ig
 			return send_request(*URL, *DATA);
 		}
 
+		template <typename T>
 		bool API::get_user_followings(const std::string& _user_id, const std::string& _max_id)
 		{
 			DATA->clear();
@@ -1078,11 +1267,13 @@ namespace ig
 			return send_request(*URL, *DATA);
 		}
 
+		template <typename T>
 		bool API::get_self_users_following()
 		{
 			get_user_followings(user_id);
 		}
 
+		template <typename T>
 		bool API::get_user_followers(const std::string& _user_id, const std::string& _max_id)
 		{
 			DATA->clear();
@@ -1103,11 +1294,13 @@ namespace ig
 			return send_request(*URL, *DATA);
 		}
 
+		template <typename T>
 		bool API::get_self_user_followers()
 		{
 			get_user_followers(user_id);
 		}
 
+		template <typename T>
 		bool API::like_comment(const std::string& _comment_id)
 		{
 			DATA->clear();
@@ -1120,6 +1313,7 @@ namespace ig
 			return send_request(*URL, *DATA);
 		}
 
+		template <typename T>
 		bool API::unlike_comment(const std::string& _comment_id)
 		{
 			DATA->clear();
@@ -1132,6 +1326,7 @@ namespace ig
 			return send_request(*URL, *DATA);
 		}
 
+		template <typename T>
 		bool API::like(const std::string& _media_id)
 		{
 			DATA->clear();
@@ -1144,6 +1339,7 @@ namespace ig
 			return send_request(*URL, *DATA);
 		}
 
+		template <typename T>
 		bool API::unlike(const std::string& _media_id)
 		{
 			DATA->clear();
@@ -1156,6 +1352,7 @@ namespace ig
 			return send_request(*URL, *DATA);
 		}
 
+		template <typename T>
 		bool API::get_media_comments(const std::string& _media_id, const std::string& _max_id)
 		{
 			DATA->clear();
@@ -1174,6 +1371,7 @@ namespace ig
 			return send_request(*URL, *DATA);
 		}
 
+		template <typename T>
 		bool API::get_direct_share()
 		{
 			DATA->clear();
@@ -1183,6 +1381,7 @@ namespace ig
 			return send_request(*URL, *DATA);
 		}
 
+		template <typename T>
 		bool API::follow(const std::string& _user_id)
 		{
 			DATA->clear();
@@ -1195,6 +1394,7 @@ namespace ig
 			return send_request(*URL, *DATA);
 		}
 
+		template <typename T>
 		bool API::unfollow(const std::string& _user_id)
 		{
 			DATA->clear();
@@ -1207,6 +1407,7 @@ namespace ig
 			return send_request(*URL, *DATA);
 		}
 
+		template <typename T>
 		bool API::block(const std::string& _user_id)
 		{
 			DATA->clear();
@@ -1219,6 +1420,7 @@ namespace ig
 			return send_request(*URL, *DATA);
 		}
 
+		template <typename T>
 		bool API::unblock(const std::string& _user_id)
 		{
 			DATA->clear();
@@ -1231,6 +1433,7 @@ namespace ig
 			return send_request(*URL, *DATA);
 		}
 
+		template <typename T>
 		bool API::user_friendship(const std::string& _user_id)
 		{
 			DATA->clear();
@@ -1243,6 +1446,7 @@ namespace ig
 			return send_request(*URL, *DATA);
 		}
 
+		template <typename T>
 		bool API::send_direct_item(const std::string& _item_type, const std::vector<std::string>& _users, const std::map<std::string, std::string>& _options)
 		{
 			DATA->clear();
@@ -1317,7 +1521,49 @@ namespace ig
 			delete headers;
 		}
 
-		
+		template<typename T>
+		bool API<T>::get_liked_media(T _max_id)
+		{
+			return false;
+		}
+
+		template<>
+		bool API<const char*>::get_liked_media(const char* _max_id)
+		{
+			URL = "";
+			const char* _BUFF;
+			sprintf((char*)_BUFF, "feed/liked/?max_id=%s", _max_id);
+			strcat((char*)URL, _BUFF);
+			return send_request(URL);
+		}
+
+		template<typename T>
+		bool API<T>::get_total_followers_or_followings(T _user_id, T _amount, T _which, bool _filter_private, bool _filter_business, bool _filter_verified, bool _usernames, T _to_file, bool _overwrite)
+		{
+			return false;
+		}
+
+		template<>
+		bool API<const char*>::get_total_followers_or_followings(const char* _user_id, const char* _amount, const char* _which, bool _filter_private, bool _filter_business, bool _filter_verified, bool _usernames, const char* _to_file, bool _overwrite)
+		{
+			if (_which == "followers")
+			{
+				const char* _key = "follower_count";
+				const char* _get = get_user_followers();
+			}
+			else if (_which == "followings")
+			{
+				const char* _key = "following_count";
+				const char* _get = get_user_followings();
+			}
+			int _sleep_track = 0;
+			std::stack<const char*> _results;
+			const char* _next_max_id = "";
+			get_username_info(_user_id);
+			const char* _username_info = json_data();
+		}
+
+
 
 
 	} //namespace API

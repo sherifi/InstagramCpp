@@ -4,13 +4,23 @@ namespace ig
 {
 	namespace settings
 	{
-		ig_login::ig_login()
+		template<typename T>
+		ig_login<T>::ig_login()
 		{
 		}
-		ig_login::~ig_login()
+
+		template<typename T>
+		ig_login<T>::~ig_login()
 		{
 		}
-		void ig_login::add_credentials()
+
+		template<typename T>
+		void ig_login<T>::add_credentials()
+		{
+		}
+
+		template<>
+		void ig_login<std::string&&>::add_credentials()
 		{
 			if (!FILE_OUT.is_open())
 			{
@@ -42,7 +52,14 @@ namespace ig
 			}
 			clean_BUFF();
 		}
-		std::tuple<std::string, std::string> ig_login::get_credentials(const std::string& username)
+
+		template<typename T>
+		std::tuple<T, T> ig_login<T>::get_credentials(T username)
+		{
+		}
+
+		template<>
+		std::tuple<std::string&&, std::string&&> ig_login<std::string&&>::get_credentials(std::string&& username)
 		{
 			std::map<std::string, std::string> login;
 			std::tuple<std::string, std::string> Login;
@@ -121,7 +138,14 @@ namespace ig
 				clean_BUFF();
 			}
 		}
-		bool ig_login::check_secret()
+
+		template<typename T>
+		bool ig_login<T>::check_secret()
+		{
+		}
+
+		template<>
+		bool ig_login<std::string&&>::check_secret()
 		{
 			if (std::filesystem::exists(SECRET_FILE))
 			{
@@ -171,7 +195,14 @@ namespace ig
 				return true;
 			}
 		}
-		void ig_login::print_credentials()
+
+		template<typename T>
+		void ig_login<T>::print_credentials()
+		{
+		}
+
+		template<>
+		void ig_login<std::string&&>::print_credentials()
 		{
 			if (std::filesystem::exists(SECRET_FILE))
 			{
@@ -205,7 +236,9 @@ namespace ig
 				std::cout << "FILE: " << SECRET_FILE << "Dosn't exist." << std::endl;
 			}
 		}
-		void ig_login::delete_credentials()
+
+		template<typename T>
+		void ig_login<T>::delete_credentials()
 		{
 			if (std::filesystem::exists(SECRET_FILE))
 			{
@@ -220,7 +253,32 @@ namespace ig
 				std::cout << "FILE: " << SECRET_FILE << "Dosn't exist." << std::endl;
 			}
 		}
-		void ig_login::clean_BUFF()
+
+		template<>
+		void ig_login<std::string&&>::delete_credentials()
+		{
+			if (std::filesystem::exists(SECRET_FILE))
+			{
+				if (FILE_IN.is_open())
+				{
+					FILE_IN.close();
+					std::filesystem::remove(SECRET_FILE);
+				}
+			}
+			else
+			{
+				std::cout << "FILE: " << SECRET_FILE << "Dosn't exist." << std::endl;
+			}
+		}
+
+		template<typename T>
+		void ig_login<T>::clean_BUFF()
+		{
+			BUFF.clear();
+		}
+
+		template<>
+		void ig_login<std::string&&>::clean_BUFF()
 		{
 			BUFF.clear();
 		}

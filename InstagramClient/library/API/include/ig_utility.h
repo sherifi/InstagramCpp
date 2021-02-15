@@ -47,28 +47,29 @@ namespace ig
 				}Map;
 			} // experiment
 
+			template <typename T>
 			class Utility
 			{
 			public:
-				std::map<const char*, const char*> get_cookie_dict();
-				const char* get_token();
-				const char* get_user_id();
-				const char* get_rank_token();
-				std::map<const char*, const char*> default_data();
-				std::map<const char*, const char*> _prepare_recipients(const char* _users[USER_VEC_SIZE], const char* _thread_id = None, bool _use_quotes = false);
-				const char* md5_hash(const char* _data);
-				const char* generate_uuid_v4();
-				const char* generate_signature(const char* _data);
-				const char* generate_device_id(const char* _seed);
-				const char* get_seed(int _number, ...);
-				const char* generate_UUID(bool _uuid_type = true);
+				std::map<T, T> get_cookie_dict();
+				T get_token();
+				T get_user_id();
+				T get_rank_token();
+				std::map<T, T> default_data();
+				std::map<T, T> _prepare_recipients(T _users[USER_VEC_SIZE], T _thread_id = None, bool _use_quotes = false);
+				T md5_hash(T _data);
+				T generate_uuid_v4();
+				T generate_signature(T _data);
+				T generate_device_id(T _seed);
+				T get_seed(int _number, ...);
+				T generate_UUID(bool _uuid_type = true);
 			private:
-				std::map<const char*, const char*> cookie_map;
-				const char* token;
-				const char* user_id;
-				const char* uuid;
-				const char* device_id;
-				std::map<const char*, const char*>* TEMP_MAP_PTR = new std::map<const char*, const char*>();
+				std::map<T, T> cookie_map;
+				T token;
+				T user_id;
+				T uuid;
+				T device_id;
+				std::map<T, T>* TEMP_MAP_PTR = new std::map<T, T>();
 			};
 		} //utility
 	} //settings

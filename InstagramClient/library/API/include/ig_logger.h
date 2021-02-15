@@ -21,14 +21,14 @@ namespace ig
 			ALL
 		}logger_level;
 
-		std::string stringfy_logg(const logger_level& _level);
+		const char* stringfy_logg(const logger_level& _level);
 
 		typedef class logger
 		{
 		public:
 			logger();
 			~logger();
-			void Log(const logger_level& _level,const std::string& _mssg);
+			void Log(const logger_level& _level, const char* _mssg);
 		}logger;
 	}
 }

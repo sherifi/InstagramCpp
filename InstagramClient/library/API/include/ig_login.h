@@ -15,13 +15,14 @@ namespace ig
 {
 	namespace settings
 	{
+		template <typename T>
 		class ig_login
 		{
 		public:
 			ig_login();
 			~ig_login();
 			void add_credentials();
-			std::tuple<std::string, std::string> get_credentials(const std::string& username = None);
+			std::tuple<T, T> get_credentials(T username = None);
 			bool check_secret();
 			void print_credentials();
 			void delete_credentials();
@@ -30,9 +31,9 @@ namespace ig
 			std::ifstream FILE_IN;
 			std::ofstream FILE_OUT;
 			std::stringstream STR_STREAM;
-			std::string SECRET_FILE = "secret2.txt";
-			std::string BUFF = "";
-			std::string SPACE = " ";
+			T SECRET_FILE = "secret2.txt";
+			T BUFF = "";
+			T SPACE = " ";
 		};
 	} //namespace settings
 } //namespace ig

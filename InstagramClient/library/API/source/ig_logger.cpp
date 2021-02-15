@@ -4,7 +4,7 @@ namespace ig
 {
 	namespace settings
 	{
-		std::string stringfy_logg(const logger_level& _level)
+		const char* stringfy_logg(const logger_level& _level)
 		{
 			switch(_level)
 			{
@@ -34,7 +34,7 @@ namespace ig
 		logger::~logger()
 		{
 		}
-		void logger::Log(const logger_level& _level, const std::string& _mssg)
+		void logger::Log(const logger_level& _level, const char* _mssg)
 		{
 			switch (_level)
 			{

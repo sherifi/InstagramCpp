@@ -16,11 +16,33 @@
 #include <openssl/md5.h>
 using namespace std;
 
+class Test
+{
+public:
+	Test();
+	~Test();
+	const char* set_url(const char* __url);
+	std::unique_ptr<const char*> URL = std::make_unique<const char*>();
+private:
+};
 
+Test::Test() {}
+Test::~Test() {}
+const char* Test::set_url(const char* __url)
+{
+	*URL = __url;
+	return *URL;
+}
 
 int main()
 {
-	get_seed(2, "first", "second");
+	char _BUFF1[32] = "First buff.";
+	char _BUFF2[32] = "Second buff.";
+
+	strcpy(_BUFF1, _BUFF2);
+	printf("%s\n", _BUFF1);
+	printf("%s\n", _BUFF2);
+
 	/*
 	std::string str8 = "en espa\xc3\xb1ol";
 	std::cout << str8 << std::endl;

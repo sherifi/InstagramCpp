@@ -6,6 +6,7 @@ namespace ig
 	{
 		namespace utility
 		{
+
 			void Print_Formatted(const char* _BUFF, const char* _format, ...)
 			{
 				va_list _argl;
@@ -14,23 +15,47 @@ namespace ig
 				va_end(_argl);
 			}
 
-			std::map<const char*, const char*> Utility::get_cookie_dict()
+			template <typename T>
+			std::map<T, T> Utility<T>::get_cookie_dict()
+			{
+			}
+
+			template <>
+			std::map<const char*, const char*> Utility<const char*>::get_cookie_dict()
 			{
 				cookie_map = session.cookies.get_dict();
 				return cookie_map;
 			}
 
-			const char* Utility::get_token()
+			template <typename T>
+			T Utility<T>::get_token()
+			{
+			}
+
+			template <>
+			const char* Utility<const char*>::get_token()
 			{
 				return cookie_map["csrftoken"];
 			}
 
-			const char* Utility::get_user_id()
+			template <typename T>
+			T Utility<T>::get_user_id()
+			{
+			}
+
+			template <>
+			const char* Utility<const char*>::get_user_id()
 			{
 				return cookie_map["ds_user_id"];
 			}
 
-			const char* Utility::get_rank_token()
+			template <typename T>
+			T Utility<T>::get_rank_token()
+			{
+			}
+
+			template <>
+			const char* Utility<const char*>::get_rank_token()
 			{
 				char _rank_token[128] = "";
 				strcat(_rank_token, get_user_id());
@@ -39,7 +64,13 @@ namespace ig
 				return _rank_token;
 			}
 
-			std::map<const char*, const char*> Utility::default_data()
+			template <typename T>
+			std::map<T, T> Utility<T>::default_data()
+			{
+			}
+
+			template <>
+			std::map<const char*, const char*> Utility<const char*>::default_data()
 			{
 				TEMP_MAP_PTR->clear();
 				TEMP_MAP_PTR->at("_uuid") = uuid;
@@ -48,7 +79,13 @@ namespace ig
 				return *TEMP_MAP_PTR;
 			}
 
-			std::map<const char*, const char*> Utility::_prepare_recipients(const char* _users[USER_VEC_SIZE], const char* _thread_id, bool _use_quotes)
+			template <typename T>
+			std::map<T, T> Utility<T>::_prepare_recipients(T _users[USER_VEC_SIZE], T _thread_id, bool _use_quotes)
+			{
+			}
+
+			template <>
+			std::map<const char*, const char*> Utility<const char*>::_prepare_recipients(const char* _users[USER_VEC_SIZE], const char* _thread_id, bool _use_quotes)
 			{
 				printf("_users must be a list.");
 				const char* _BUFF = "";
@@ -92,7 +129,14 @@ namespace ig
 				return *result;
 			}
 
-			const char* Utility::md5_hash(const char* _data) {
+			template<typename T>
+			T Utility<T>::md5_hash(T _data) 
+			{
+			}
+
+			template<>
+			const char* Utility<const char*>::md5_hash(const char* _data)
+			{
 				unsigned char result[MD5_DIGEST_LENGTH];
 				MD5((unsigned char*)_data, strlen(_data), result);
 
@@ -115,7 +159,13 @@ namespace ig
 				return BUFF;
 			}
 
-			const char* Utility::generate_uuid_v4()
+			template <typename T>
+			T Utility<T>::generate_uuid_v4()
+			{
+			}
+
+			template <>
+			const char* Utility<const char*>::generate_uuid_v4()
 			{
 				static std::random_device              rd;
 				static std::mt19937                    gen(rd());
@@ -153,16 +203,28 @@ namespace ig
 				return BUFF;
 			}
 
-			const char* Utility::generate_signature(const char* _data)
+			template <typename T>
+			T Utility<T>::generate_signature(T _data)
 			{
-				const char* _key = (ig::settings::IG_SIG_KEY).c_str();
+			}
+
+			template<>
+			const char* Utility<const char*>::generate_signature(const char* _data)
+			{
+				const char* _key = ig::settings::IG_SIG_KEY;
 				unsigned char* body = HMAC(EVP_sha256(), _key, strlen(_key), (unsigned char*)_data, strlen(_data), NULL, NULL);
 				char* signature;
 				sprintf(signature, "ig_sig_key_version=%s&signed_body=%s", _key, body);
 				return signature;
 			}
 
-			const char* Utility::generate_device_id(const char* _seed)
+			template <typename T>
+			T Utility<T>::generate_device_id(T _seed)
+			{
+			}
+
+			template <>
+			const char* Utility<const char*>::generate_device_id(const char* _seed)
 			{
 				const char* _volatile_seed = "12345";
 				const char* _data = strcat((char*)_seed, _volatile_seed);
@@ -175,7 +237,13 @@ namespace ig
 				return _device_id;
 			}
 
-			const char* Utility::get_seed(int _number, ...)
+			template <typename T>
+			T Utility<T>::get_seed(int _number, ...)
+			{
+			}
+
+			template <>
+			const char* Utility<const char*>::get_seed(int _number, ...)
 			{
 				char _BUFF[128] = "";
 				va_list _argl;
@@ -191,7 +259,13 @@ namespace ig
 				return _BUFF;
 			}
 
-			const char* Utility::generate_UUID(bool _uuid_type)
+			template <typename T>
+			T Utility<T>::generate_UUID(bool _uuid_type)
+			{
+			}
+
+			template <>
+			const char* Utility<const char*>::generate_UUID(bool _uuid_type)
 			{
 				const char* _BUFF = "";
 				const char* generated_uuid = generate_uuid_v4();
