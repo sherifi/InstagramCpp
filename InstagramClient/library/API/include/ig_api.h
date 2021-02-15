@@ -12,14 +12,29 @@
 #include "ig_devices.h"
 #include "ig_login.h"
 #include "ig_logger.h"
+#include "ig_constants.h"
+#include "ig_utility.h"
 
 #include <filesystem>
 #include <fstream>
+#include <sstream>
 #include <random>
 #include <tuple>
-#include <cassert>
 #include <chrono>
 #include <algorithm>
+#include <ctime>
+#include <locale>
+#include <codecvt>
+
+#include <cstdlib>
+#include <cstdio>
+#include <cstring>
+#include <cassert>
+
+
+#include <openssl/hmac.h>
+#include <openssl/sha.h>
+#include <openssl/md5.h>
 
 namespace ig
 {
@@ -60,11 +75,6 @@ namespace ig
 			bool logout();
 			std::string set_proxy();
 			bool send_request(const std::string& _endpoint, const std::string& _post = None, bool _login = false, bool _with_signature = true, const std::string& _headers = None);
-			std::map<std::string, std::string> get_cookie_dict();
-			std::string get_token();
-			std::string get_user_id();
-			std::string get_rank_token();
-			std::map<std::string, std::string> default_data();
 			std::map<std::string, std::string> json_data(const std::map<std::string, std::string>& _data = NULL_map);
 			bool sync_features();
 			bool auto_complete_user_list();
@@ -83,7 +93,48 @@ namespace ig
 			bool edit_media(const std::string& _media_id, const std::string& _captionText = None);
 			bool remove_self_tag(const std::string& _media_id);
 			bool media_info(const std::string& _media_id);
-			bool archive_media(const std::string& _media, bool _undo = false);
+			bool archive_media(const std::map<std::string, std::string>& _media = NULL_map, bool _undo = false);
+			bool delete_media(const std::map<std::string, std::string>& _media = NULL_map);
+			bool change_password(const std::string& _new_password = None);
+			bool explore();
+			bool comment(const std::string& _media_id, const std::string& _comment_text);
+			bool reply_to_comment(const std::string& _media_id, const std::string& _comment_text, const std::string& _parent_comment_id);
+			bool delete_comment(const std::string& _media_id, const std::string& _comment_id);
+			bool get_username_info(const std::string& _user_id);
+			bool get_self_username_info();
+			bool get_recent_activity();
+			bool get_following_recent_activity();
+			bool getv2Inbox();
+			bool get_user_tags(const std::string& _user_id);
+			bool tag_feed(const std::string& _tag);
+			bool get_comment_likers(const std::string& _comment_id);
+			bool get_media_likers(const std::string& _media_id);
+			bool get_geo_media(const std::string& _user_id);
+			bool get_self_geo_media();
+			bool sync_from_adress_book(const std::string& _contacts);
+			bool get_timeline();
+			bool get_user_feed(const std::string& _user_id, const std::string& _max_id = None, const std::string& _min_timestamp = None);
+			bool get_self_user_feed(const std::string& _max_id = None, const std::string& _min_timestamp = None);
+			bool get_hashtag_feed(const std::string& _hashtag = None, const std::string& _max_id = None);
+			bool get_location_feed(const std::string& _location_id = None, const std::string& _max_id = None);
+			bool get_popular_feed();
+			bool get_user_followings(const std::string& _user_id = None, const std::string& _max_id = None);
+			bool get_self_users_following();
+			bool get_user_followers(const std::string& _user_id = None, const std::string& _max_id = None);
+			bool get_self_user_followers();
+			bool like_comment(const std::string& _comment_id = None);
+			bool unlike_comment(const std::string& _comment_id = None);
+			bool like(const std::string& _media_id = None);
+			bool unlike(const std::string& _media_id = None);
+			bool get_media_comments(const std::string& _media_id = None, const std::string& _max_id = None);
+			bool get_direct_share();
+			bool follow(const std::string& _user_id = None);
+			bool unfollow(const std::string& _user_id = None);
+			bool block(const std::string& _user_id = None);
+			bool unblock(const std::string& _user_id = None);
+			bool user_friendship(const std::string& _user_id = None);
+			
+			bool send_direct_item(const std::string& _item_type, const std::vector<std::string>& _users, const std::map<std::string, std::string>& _options = {});
 
 
 
@@ -92,7 +143,6 @@ namespace ig
 			int get_seed(const std::string& _username = None, const std::string& _password = None);
 			std::string setup_proxy();
 			bool get_self_users_following();
-			std::string generate_signature(const std::string& _post);
 			//
 
 
@@ -136,6 +186,10 @@ namespace ig
 			ig::API::VIDEO::video* VIDEO_ptr = nullptr;
 			std::map<std::string, std::string>* DATA = new std::map<std::string, std::string>();
 			std::string* URL = new std::string();
+			std::string rank_token = nullptr;
+			std::string signature = nullptr;
+			const char* device_id = nullptr;
+			ig::settings::utility::Utility utility;
 		private:
 			std::fstream FILE;
 			std::ifstream FILE_IN;

@@ -115,7 +115,9 @@ namespace ig
 					data->append("device_id").append(":").append(device_id).append(",");
 					data->append("password").append(":").append(password).append(",");
 					data->append("login_attempt_count").append(":").append("0").append(",");
-					if (send_request("accounts/login/", *data, true))
+					URL->clear();
+					*URL = ig::settings::ENDPOINTS::login;
+					if (send_request(*URL, *data, true))
 					{
 						use_cookie = true;
 						save_successful_login(use_cookie, cookie_fname);
@@ -397,7 +399,9 @@ namespace ig
 				return true;
 			}
 			data = json.dumps({});
-			is_logged_in = !send_request("accounts/logout/", data, with_signature = False);
+			URL->clear();
+			*URL = ig::settings::ENDPOINTS::logout;
+			is_logged_in = !send_request(*URL, data, with_signature = False);
 			return (!is_logged_in);
 		}
 
@@ -442,7 +446,7 @@ namespace ig
 					if (_with_signature)
 					{
 						//Only `send_direct_item` doesn't need a signature
-						post = generate_signature(_post);
+						post = utility.generate_signature(_post);
 					}
 					response = session.post(ig::settings::API_URL + _endpoint, data = _post);
 				}
@@ -577,36 +581,6 @@ namespace ig
 			}
 		}
 
-		std::map<std::string, std::string> API::get_cookie_dict()
-		{
-			cookie_map = session.cookies.get_dict();
-			return cookie_map;
-		}
-
-		std::string API::get_token()
-		{
-			return cookie_map["csrftoken"];
-		}
-
-		std::string API::get_user_id()
-		{
-			return cookie_map["ds_user_id"];
-		}
-
-		std::string API::get_rank_token()
-		{
-			return (user_id + "_" + uuid);
-		}
-
-		std::map<std::string, std::string> API::default_data()
-		{
-			TEMP_MAP_PTR->clear();
-			*TEMP_MAP_PTR["_uuid"] = uuid;
-			*TEMP_MAP_PTR["_uid"] = user_id;
-			*TEMP_MAP_PTR["_csrftoken"] = token;
-			return *TEMP_MAP_PTR;
-		}
-
 		std::map<std::string, std::string> API::json_data(const std::map<std::string, std::string>& _data)
 		{
 			TEMP_MAP_PTR->clear();
@@ -615,7 +589,7 @@ namespace ig
 			{
 				*TEMP_MAP_PTR = NULL_map;
 			}
-			*TEMP_MAP_PTR = default_data();
+			*TEMP_MAP_PTR = utility.default_data();
 			return json.dummps(*TEMP_MAP_PTR);
 		}
 
@@ -624,14 +598,14 @@ namespace ig
 			DATA->clear();
 			*DATA = json_data({ {"id", user_id}, {"experiments", ig::settings::EXPERIMENTS[0]} });
 			URL->clear();
-			*URL = "qe/sync";
+			*URL = ig::settings::ENDPOINTS::sync_features;
 			return send_request(*URL, *DATA);
 		}
 
 		bool API::auto_complete_user_list()
 		{
 			URL->clear();
-			*URL = "friendships/autocomplete_user_list/";
+			*URL = ig::settings::ENDPOINTS::auto_complete_user_list;
 			return send_request(*URL);
 		}
 
@@ -641,7 +615,7 @@ namespace ig
 			DATA->clear();
 			*DATA = json_data({ { "is_prefetch", "0"}, {"is_pull_to_refresh", "0"} });
 			URL->clear();
-			*URL = "feed/timeline/";
+			*URL = ig::settings::ENDPOINTS::get_timeline_feed;
 			TEMP_MAP_PTR->clear();
 			return send_request(*URL, *DATA, false , false, "");
 		}
@@ -649,7 +623,7 @@ namespace ig
 		bool API::get_megaphone_log()
 		{
 			URL->clear();
-			*URL = "megaphone/log/";
+			*URL = ig::settings::ENDPOINTS::get_megaphone_log;
 			return send_request(*URL);
 		}
 
@@ -658,7 +632,7 @@ namespace ig
 			DATA->clear();
 			*DATA = json_data({ {"id", user_id}, {"experiments", ig::settings::EXPERIMENTS[0]} });
 			URL->clear();
-			*URL = "qe/expose/";
+			*URL = ig::settings::ENDPOINTS::expose;
 			return send_request(*URL, *TEMP_MAP_PTR);
 		}
 
@@ -767,7 +741,10 @@ namespace ig
 			DATA->clear();
 			*DATA = json_data({ {"caption_text", _captionText} });
 			URL->clear();
-			URL->append("media/").append(_media_id).append("/edit_media/");
+			TEMP_STR_PTR->clear();
+			*TEMP_STR_PTR = "{media_id}";
+			*URL = ig::settings::ENDPOINTS::edit_media;
+			URL->replace(URL->find(*TEMP_STR_PTR), TEMP_STR_PTR->length(), _media_id);
 			return send_request(*URL, *DATA);
 		}
 
@@ -776,22 +753,571 @@ namespace ig
 			DATA->clear();
 			*DATA = json_data();
 			URL->clear();
-			URL->append("media/").append(_media_id).append("/remove/");
+			TEMP_STR_PTR->clear();
+			*TEMP_STR_PTR = "{media_id}";
+			*URL = ig::settings::ENDPOINTS::remove_self_tag;
+			URL->replace(URL->find(*TEMP_STR_PTR), TEMP_STR_PTR->length(), _media_id);
 			return send_request(*URL, *DATA);
 		}
 
 		bool API::media_info(const std::string& _media_id)
 		{
 			URL->clear();
-			URL->append("media/").append(_media_id).append("/info/");
+			TEMP_STR_PTR->clear();
+			*TEMP_STR_PTR = "{media_id}";
+			*URL = ig::settings::ENDPOINTS::media_info;
+			URL->replace(URL->find(*TEMP_STR_PTR), TEMP_STR_PTR->length(), _media_id);
 			return send_request(*URL);
 		}
 
-		bool API::archive_media(const std::string& _media, bool _undo)
+		bool API::archive_media(const std::map<std::string, std::string>& _media, bool _undo)
 		{
-			return false;
+			DATA->clear();
+			*DATA = json_data({ {"media_id", _media.at("id")} });
+			URL->clear();
+			TEMP_STR_PTR->clear();
+			*TEMP_STR_PTR = "{media_id}";
+			*URL = ig::settings::ENDPOINTS::archive_media;
+			URL->replace(URL->find(*TEMP_STR_PTR), TEMP_STR_PTR->length(), _media.at("id"));
+			*TEMP_STR_PTR = "{action}";
+			std::string* action = new std::string();
+			if(!_undo)
+			{
+				*action = "only_me";
+			}
+			else
+			{
+				*action = "undo_only_me";
+			}
+			URL->replace(URL->find(*TEMP_STR_PTR), TEMP_STR_PTR->length(), *action);
+			delete action;
+			*TEMP_STR_PTR = "{media_type}";
+			URL->replace(URL->find(*TEMP_STR_PTR), TEMP_STR_PTR->length(), _media.at("media_type"));
+			return send_request(*URL, *DATA);
 		}
 
+		bool API::delete_media(const std::map<std::string, std::string>& _media)
+		{
+			DATA->clear();
+			*DATA = json_data({ {"media_id", _media.at("id")} });
+			URL->clear();
+			TEMP_STR_PTR->clear();
+			*TEMP_STR_PTR = "{media_id}";
+			*URL = ig::settings::ENDPOINTS::delete_media;
+			URL->replace(URL->find(*TEMP_STR_PTR), TEMP_STR_PTR->length(), _media.at("id"));
+			return send_request(*URL, *DATA);
+		}
+
+		bool API::change_password(const std::string& _new_password)
+		{
+			DATA->clear();
+			*DATA = json_data({ {"old_password", password}, {"old_password1", _new_password}, {"old_password2", _new_password} });
+			URL->clear();
+			*URL = ig::settings::ENDPOINTS::change_password;
+			return send_request(*URL, *DATA);
+		}
+
+		bool API::explore()
+		{
+			URL->clear();
+			*URL = ig::settings::ENDPOINTS::explore;
+			return send_request(*URL);
+		}
+
+		bool API::comment(const std::string& _media_id, const std::string& _comment_text)
+		{
+			DATA->clear();
+			*DATA = json_data({ {"comment_text", _comment_text} });
+			URL->clear();
+			TEMP_STR_PTR->clear();
+			*TEMP_STR_PTR = "{media_id}";
+			*URL = ig::settings::ENDPOINTS::comment;
+			URL->replace(URL->find(*TEMP_STR_PTR), TEMP_STR_PTR->length(), _media_id);
+			return send_request(*URL, *DATA);
+		}
+
+		bool API::reply_to_comment(const std::string& _media_id, const std::string& _comment_text, const std::string& _parent_comment_id)
+		{
+			DATA->clear();
+			*DATA = json_data({ {"comment_text", _comment_text}, {"replied_to_comment_id", _parent_comment_id} });
+			URL->clear();
+			TEMP_STR_PTR->clear();
+			*TEMP_STR_PTR = "{media_id}";
+			*URL = ig::settings::ENDPOINTS::reply_to_comment;
+			URL->replace(URL->find(*TEMP_STR_PTR), TEMP_STR_PTR->length(), _media_id);
+			return send_request(*URL, *DATA);
+		}
+
+		bool API::delete_comment(const std::string& _media_id, const std::string& _comment_id)
+		{
+			DATA->clear();
+			*DATA = json_data();
+			URL->clear();
+			TEMP_STR_PTR->clear();
+			*TEMP_STR_PTR = "{media_id}";
+			*URL = ig::settings::ENDPOINTS::delete_comment;
+			URL->replace(URL->find(*TEMP_STR_PTR), TEMP_STR_PTR->length(), _media_id);
+			*TEMP_STR_PTR = "{comment_id}";
+			URL->replace(URL->find(*TEMP_STR_PTR), TEMP_STR_PTR->length(), _comment_id);
+			return send_request(*URL, *DATA);
+		}
+
+		bool API::get_username_info(const std::string& _user_id)
+		{
+			DATA->clear();
+			*DATA = json_data();
+			URL->clear();
+			TEMP_STR_PTR->clear();
+			*TEMP_STR_PTR = "{user_id}";
+			*URL = ig::settings::ENDPOINTS::get_username_info;
+			URL->replace(URL->find(*TEMP_STR_PTR), TEMP_STR_PTR->length(), _user_id);
+			return send_request(*URL, *DATA);
+		}
+
+		bool API::get_self_username_info()
+		{
+			get_username_info(user_id);
+		}
+
+		bool API::get_recent_activity()
+		{
+			DATA->clear();
+			*DATA = json_data();
+			URL->clear();
+			*URL = ig::settings::ENDPOINTS::get_recent_activity;
+			return send_request(*URL, *DATA);
+		}
+
+		bool API::get_following_recent_activity()
+		{
+			DATA->clear();
+			*DATA = json_data();
+			URL->clear();
+			*URL = ig::settings::ENDPOINTS::get_following_recent_activity;
+			return send_request(*URL, *DATA);
+		}
+
+		bool API::getv2Inbox()
+		{
+			DATA->clear();
+			*DATA = json_data();
+			URL->clear();
+			*URL = ig::settings::ENDPOINTS::getv2Inbox;
+			return send_request(*URL, *DATA);
+		}
+
+		bool API::get_user_tags(const std::string& _user_id)
+		{
+			DATA->clear();
+			*DATA = json_data();
+			URL->clear();
+			TEMP_STR_PTR->clear();
+			*TEMP_STR_PTR = "{user_id}";
+			*URL = ig::settings::ENDPOINTS::get_user_tags;
+			URL->replace(URL->find(*TEMP_STR_PTR), TEMP_STR_PTR->length(), _user_id);
+			*TEMP_STR_PTR = "{rank_token}";
+			URL->replace(URL->find(*TEMP_STR_PTR), TEMP_STR_PTR->length(), rank_token);
+			return send_request(*URL, *DATA);
+		}
+
+		bool API::tag_feed(const std::string& _tag)
+		{
+			DATA->clear();
+			*DATA = json_data();
+			URL->clear();
+			TEMP_STR_PTR->clear();
+			*TEMP_STR_PTR = "{tag}";
+			*URL = ig::settings::ENDPOINTS::tag_feed;
+			URL->replace(URL->find(*TEMP_STR_PTR), TEMP_STR_PTR->length(), _tag);
+			*TEMP_STR_PTR = "{rank_token}";
+			URL->replace(URL->find(*TEMP_STR_PTR), TEMP_STR_PTR->length(), rank_token);
+			return send_request(*URL, *DATA);
+		}
+
+		bool API::get_comment_likers(const std::string& _comment_id)
+		{
+			DATA->clear();
+			*DATA = json_data();
+			URL->clear();
+			TEMP_STR_PTR->clear();
+			*TEMP_STR_PTR = "{comment_id}";
+			*URL = ig::settings::ENDPOINTS::get_comment_likers;
+			URL->replace(URL->find(*TEMP_STR_PTR), TEMP_STR_PTR->length(), _comment_id);
+			return send_request(*URL, *DATA);
+		}
+
+		bool API::get_media_likers(const std::string& _media_id)
+		{
+			DATA->clear();
+			*DATA = json_data();
+			URL->clear();
+			TEMP_STR_PTR->clear();
+			*TEMP_STR_PTR = "{media_id}";
+			*URL = ig::settings::ENDPOINTS::get_comment_likers;
+			URL->replace(URL->find(*TEMP_STR_PTR), TEMP_STR_PTR->length(), _media_id);
+			return send_request(*URL, *DATA);
+		}
+
+		bool API::get_geo_media(const std::string& _user_id)
+		{
+			DATA->clear();
+			*DATA = json_data();
+			URL->clear();
+			TEMP_STR_PTR->clear();
+			*TEMP_STR_PTR = "{user_id}";
+			*URL = ig::settings::ENDPOINTS::get_geo_media;
+			URL->replace(URL->find(*TEMP_STR_PTR), TEMP_STR_PTR->length(), _user_id);
+			return send_request(*URL, *DATA);
+		}
+
+		bool API::get_self_geo_media()
+		{
+			get_geo_media(user_id);
+		}
+
+		bool API::sync_from_adress_book(const std::string& _contacts)
+		{
+			DATA->clear();
+			*DATA = json_data({ {"contacts", json.dumps(_contacts)} });
+			URL->clear();
+			*URL = ig::settings::ENDPOINTS::sync_from_adress_book;
+			return send_request(*URL, *DATA);
+		}
+
+		bool API::get_timeline()
+		{
+			URL->clear();
+			*TEMP_STR_PTR = "{rank_token}";
+			*URL = ig::settings::ENDPOINTS::get_timeline;
+			URL->replace(URL->find(*TEMP_STR_PTR), TEMP_STR_PTR->length(), rank_token);
+			return send_request(*URL, *DATA);
+		}
+
+		bool API::get_user_feed(const std::string& _user_id, const std::string& _max_id, const std::string& _min_timestamp)
+		{
+			DATA->clear();
+			*DATA = json_data();
+			URL->clear();
+			TEMP_STR_PTR->clear();
+			*TEMP_STR_PTR = "{user_id}";
+			*URL = ig::settings::ENDPOINTS::get_user_feed;
+			URL->replace(URL->find(*TEMP_STR_PTR), TEMP_STR_PTR->length(), _user_id);
+			*TEMP_STR_PTR = "{max_id}";
+			URL->replace(URL->find(*TEMP_STR_PTR), TEMP_STR_PTR->length(), _max_id);
+			*TEMP_STR_PTR = "{min_timestamp}";
+			URL->replace(URL->find(*TEMP_STR_PTR), TEMP_STR_PTR->length(), _min_timestamp);
+			*TEMP_STR_PTR = "{rank_token}";
+			URL->replace(URL->find(*TEMP_STR_PTR), TEMP_STR_PTR->length(), rank_token);
+			return send_request(*URL, *DATA);
+		}
+
+		bool API::get_self_user_feed(const std::string& _max_id, const std::string& _min_timestamp)
+		{
+			get_user_feed(user_id, _max_id, _min_timestamp);
+		}
+
+		bool API::get_hashtag_feed(const std::string& _hashtag, const std::string& _max_id)
+		{
+			DATA->clear();
+			*DATA = json_data();
+			URL->clear();
+			TEMP_STR_PTR->clear();
+			*TEMP_STR_PTR = "{hashtag}";
+			*URL = ig::settings::ENDPOINTS::get_hashtag_feed;
+			URL->replace(URL->find(*TEMP_STR_PTR), TEMP_STR_PTR->length(), _hashtag);
+			*TEMP_STR_PTR = "{max_id}";
+			URL->replace(URL->find(*TEMP_STR_PTR), TEMP_STR_PTR->length(), _max_id);
+			*TEMP_STR_PTR = "{rank_token}";
+			URL->replace(URL->find(*TEMP_STR_PTR), TEMP_STR_PTR->length(), rank_token);
+			return send_request(*URL, *DATA);
+		}
+
+		bool API::get_location_feed(const std::string& _location_id, const std::string& _max_id)
+		{
+			DATA->clear();
+			*DATA = json_data();
+			URL->clear();
+			TEMP_STR_PTR->clear();
+			*TEMP_STR_PTR = "{location_id}";
+			*URL = ig::settings::ENDPOINTS::get_location_feed;
+			URL->replace(URL->find(*TEMP_STR_PTR), TEMP_STR_PTR->length(), _location_id);
+			*TEMP_STR_PTR = "{max_id}";
+			URL->replace(URL->find(*TEMP_STR_PTR), TEMP_STR_PTR->length(), _max_id);
+			*TEMP_STR_PTR = "{rank_token}";
+			URL->replace(URL->find(*TEMP_STR_PTR), TEMP_STR_PTR->length(), rank_token);
+			return send_request(*URL, *DATA);
+		}
+
+		bool API::get_popular_feed()
+		{
+			DATA->clear();
+			*DATA = json_data();
+			URL->clear();
+			TEMP_STR_PTR->clear();
+			*URL = ig::settings::ENDPOINTS::get_popular_feed;
+			*TEMP_STR_PTR = "{rank_token}";
+			URL->replace(URL->find(*TEMP_STR_PTR), TEMP_STR_PTR->length(), rank_token);
+			return send_request(*URL, *DATA);
+		}
+
+		bool API::get_user_followings(const std::string& _user_id, const std::string& _max_id)
+		{
+			DATA->clear();
+			*DATA = json_data();
+			URL->clear();
+			TEMP_STR_PTR->clear();
+			*TEMP_STR_PTR = "{user_id}";
+			*URL = ig::settings::ENDPOINTS::get_user_followings;
+			URL->replace(URL->find(*TEMP_STR_PTR), TEMP_STR_PTR->length(), _user_id);
+			*TEMP_STR_PTR = "{max_id}";
+			URL->replace(URL->find(*TEMP_STR_PTR), TEMP_STR_PTR->length(), _max_id);
+			*TEMP_STR_PTR = "{sig_key}";
+			URL->replace(URL->find(*TEMP_STR_PTR), TEMP_STR_PTR->length(), ig::settings::SIG_KEY_VERSION);
+			*TEMP_STR_PTR = "{rank_token}";
+			URL->replace(URL->find(*TEMP_STR_PTR), TEMP_STR_PTR->length(), rank_token);
+			return send_request(*URL, *DATA);
+		}
+
+		bool API::get_self_users_following()
+		{
+			get_user_followings(user_id);
+		}
+
+		bool API::get_user_followers(const std::string& _user_id, const std::string& _max_id)
+		{
+			DATA->clear();
+			*DATA = json_data();
+			URL->clear();
+			TEMP_STR_PTR->clear();
+			*TEMP_STR_PTR = "{user_id}";
+			*URL = ig::settings::ENDPOINTS::get_user_followers;
+			URL->replace(URL->find(*TEMP_STR_PTR), TEMP_STR_PTR->length(), _user_id);
+			*TEMP_STR_PTR = "{rank_token}";
+			URL->replace(URL->find(*TEMP_STR_PTR), TEMP_STR_PTR->length(), rank_token);
+			if (_max_id != None)
+			{
+				URL->append("&max_id={max_id}");
+			}
+			*TEMP_STR_PTR = "{max_id}";
+			URL->replace(URL->find(*TEMP_STR_PTR), TEMP_STR_PTR->length(), _max_id);
+			return send_request(*URL, *DATA);
+		}
+
+		bool API::get_self_user_followers()
+		{
+			get_user_followers(user_id);
+		}
+
+		bool API::like_comment(const std::string& _comment_id)
+		{
+			DATA->clear();
+			*DATA = json_data();
+			URL->clear();
+			TEMP_STR_PTR->clear();
+			*TEMP_STR_PTR = "{comment_id}";
+			*URL = ig::settings::ENDPOINTS::like_comment;
+			URL->replace(URL->find(*TEMP_STR_PTR), TEMP_STR_PTR->length(), _comment_id);
+			return send_request(*URL, *DATA);
+		}
+
+		bool API::unlike_comment(const std::string& _comment_id)
+		{
+			DATA->clear();
+			*DATA = json_data();
+			URL->clear();
+			TEMP_STR_PTR->clear();
+			*TEMP_STR_PTR = "{comment_id}";
+			*URL = ig::settings::ENDPOINTS::unlike_comment;
+			URL->replace(URL->find(*TEMP_STR_PTR), TEMP_STR_PTR->length(), _comment_id);
+			return send_request(*URL, *DATA);
+		}
+
+		bool API::like(const std::string& _media_id)
+		{
+			DATA->clear();
+			*DATA = json_data({ {"media_id", _media_id} });
+			URL->clear();
+			TEMP_STR_PTR->clear();
+			*TEMP_STR_PTR = "{media_id}";
+			*URL = ig::settings::ENDPOINTS::like;
+			URL->replace(URL->find(*TEMP_STR_PTR), TEMP_STR_PTR->length(), _media_id);
+			return send_request(*URL, *DATA);
+		}
+
+		bool API::unlike(const std::string& _media_id)
+		{
+			DATA->clear();
+			*DATA = json_data({ {"media_id", _media_id} });
+			URL->clear();
+			TEMP_STR_PTR->clear();
+			*TEMP_STR_PTR = "{media_id}";
+			*URL = ig::settings::ENDPOINTS::unlike;
+			URL->replace(URL->find(*TEMP_STR_PTR), TEMP_STR_PTR->length(), _media_id);
+			return send_request(*URL, *DATA);
+		}
+
+		bool API::get_media_comments(const std::string& _media_id, const std::string& _max_id)
+		{
+			DATA->clear();
+			*DATA = json_data();
+			URL->clear();
+			TEMP_STR_PTR->clear();
+			*TEMP_STR_PTR = "{media_id}";
+			*URL = ig::settings::ENDPOINTS::get_media_comments;
+			URL->replace(URL->find(*TEMP_STR_PTR), TEMP_STR_PTR->length(), _media_id);
+			if (_max_id != None)
+			{
+				URL->append("?max_id={max_id}");
+			}
+			*TEMP_STR_PTR = "{max_id}";
+			URL->replace(URL->find(*TEMP_STR_PTR), TEMP_STR_PTR->length(), _max_id);
+			return send_request(*URL, *DATA);
+		}
+
+		bool API::get_direct_share()
+		{
+			DATA->clear();
+			*DATA = json_data();
+			URL->clear();
+			*URL = ig::settings::ENDPOINTS::get_direct_share;
+			return send_request(*URL, *DATA);
+		}
+
+		bool API::follow(const std::string& _user_id)
+		{
+			DATA->clear();
+			*DATA = json_data({ {"user_id", _user_id} });
+			URL->clear();
+			TEMP_STR_PTR->clear();
+			*TEMP_STR_PTR = "{user_id}";
+			*URL = ig::settings::ENDPOINTS::follow;
+			URL->replace(URL->find(*TEMP_STR_PTR), TEMP_STR_PTR->length(), _user_id);
+			return send_request(*URL, *DATA);
+		}
+
+		bool API::unfollow(const std::string& _user_id)
+		{
+			DATA->clear();
+			*DATA = json_data({ {"user_id", _user_id} });
+			URL->clear();
+			TEMP_STR_PTR->clear();
+			*TEMP_STR_PTR = "{user_id}";
+			*URL = ig::settings::ENDPOINTS::unfollow;
+			URL->replace(URL->find(*TEMP_STR_PTR), TEMP_STR_PTR->length(), _user_id);
+			return send_request(*URL, *DATA);
+		}
+
+		bool API::block(const std::string& _user_id)
+		{
+			DATA->clear();
+			*DATA = json_data({ {"user_id", _user_id} });
+			URL->clear();
+			TEMP_STR_PTR->clear();
+			*TEMP_STR_PTR = "{user_id}";
+			*URL = ig::settings::ENDPOINTS::block;
+			URL->replace(URL->find(*TEMP_STR_PTR), TEMP_STR_PTR->length(), _user_id);
+			return send_request(*URL, *DATA);
+		}
+
+		bool API::unblock(const std::string& _user_id)
+		{
+			DATA->clear();
+			*DATA = json_data({ {"user_id", _user_id} });
+			URL->clear();
+			TEMP_STR_PTR->clear();
+			*TEMP_STR_PTR = "{user_id}";
+			*URL = ig::settings::ENDPOINTS::unblock;
+			URL->replace(URL->find(*TEMP_STR_PTR), TEMP_STR_PTR->length(), _user_id);
+			return send_request(*URL, *DATA);
+		}
+
+		bool API::user_friendship(const std::string& _user_id)
+		{
+			DATA->clear();
+			*DATA = json_data({ {"user_id", _user_id} });
+			URL->clear();
+			TEMP_STR_PTR->clear();
+			*TEMP_STR_PTR = "{user_id}";
+			*URL = ig::settings::ENDPOINTS::user_friendship;
+			URL->replace(URL->find(*TEMP_STR_PTR), TEMP_STR_PTR->length(), _user_id);
+			return send_request(*URL, *DATA);
+		}
+
+		bool API::send_direct_item(const std::string& _item_type, const std::vector<std::string>& _users, const std::map<std::string, std::string>& _options)
+		{
+			DATA->clear();
+			*DATA = json_data({ {"client_context", ig::settings::uuid::generate_uuid_v4()}, {"action", "send_item"} });
+			std::map<std::string, std::string>* headers = new std::map<std::string, std::string>();
+			std::map<std::string, std::vector<std::string>>* recipients = new std::map<std::string, std::vector<std::string>>;
+			*recipients = _prepare_recipients(_users, _options.at("thread"), false);
+			if (recipients->empty())
+			{
+				return false;
+			}
+			DATA->at("recipient_users") = recipients->at("users");
+			if (recipients->at("thread"))
+			{
+				DATA->at("thread_ids") = recipients->at("thread");
+			}
+			*DATA = default_data();
+			TEMP_STR_PTR->clear();
+			*TEMP_STR_PTR = "{}";
+			*URL = ig::settings::ENDPOINTS::send_direct_item;
+			URL->replace(URL->find(*TEMP_STR_PTR), TEMP_STR_PTR->length(), _item_type);
+			std::string* text = options.get("text", "");
+			if (_item_type == "link")
+			{
+				DATA->at("link_text") = *text;
+				DATA->at("link_urls") = json.dumps(_options.at("ursl"));
+			}
+			else if (_item_type == "text")
+			{
+				DATA->at("text") = *text;
+			}
+			else if (_item_type == "media_share")
+			{
+				DATA->at("text") = *text;
+				DATA->at("media_type") = options.get("media_type", "photo");
+				DATA->at("media_id") = options.get("media_id", "");
+			}
+			else if (_item_type == "hashtag")
+			{
+				DATA->at("text") = *text;
+				DATA->at("hashtag") = options.get("hashtag", "");
+			}
+			else if (_item_type == "profile")
+			{
+				DATA->at("text") = *text;
+				DATA->at("profile_user_id") = options.get("profile_user_id", "");
+			}
+			else if (_item_type == "photo")
+			{
+				*URL = "direct_v2/threads/broadcast/upload_photo/";
+				std::string* filepath = new std::string();
+				*filepath = _options.at("filepath");
+				std::string* upload_id = new std::string();
+				auto x = time(NULL);
+				*upload_id = std::to_string(x * 1000);
+				if (std::filesystem::exists(*filepath))
+				{
+					FILE_IN.open(*filepath, std::ios::binary);
+					if (FILE_IN.is_open())
+					{
+						char TEMP_buff[4096];
+						auto photo = FILE_IN.read(TEMP_buff, 4096);
+						DATA->at("photo") = ("direct_temp_photo_" + *upload_id + ".jpg", photo, "application/octet-stream", { "Content-Transfer-Encoding": "binary" });
+					}
+					auto m = MultipartEncoder(*DATA, boundary = uuid);
+					*DATA = std::to_string(m);
+					headers.update({ "Content-type", m.content_type });
+				}
+			}
+			return send_request(*URL, *DATA, with_signature = false, headers = headers);
+			delete recipients;
+			delete headers;
+		}
+
+		
 
 
 	} //namespace API
