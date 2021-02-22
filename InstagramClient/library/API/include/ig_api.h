@@ -171,6 +171,8 @@ namespace ig
 			bool search_tags(T _query);
 			bool search_location(T _query = NULL_str, T _lat = NULL_str, T _lng = NULL_str);
 			bool get_user_reel(T _user_id);
+			bool get_users_reel(std::vector<T> _user_ids);
+
 
 
 		private:

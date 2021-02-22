@@ -68,6 +68,7 @@ namespace ig
 			static const char* search_tags = "tags/search/?is_typeahead=true&q={query}&rank_token={rank_token}";
 			static const char* search_location = "fbsearch/places/?rank_token={rank_token}&query={query}&lat={lat}&lng={lng}";
 			static const char* get_user_reel = "feed/user/{}/reel_media/";
+			static const char* get_users_reel = "feed/reels_media/";
 		} // ENDPOINTS
 	} //settings
 } // ig

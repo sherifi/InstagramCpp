@@ -3839,6 +3839,47 @@ namespace ig
 			return send_request(URL, DATA);
 		}
 
+		template<typename T>
+		bool API<T>::get_users_reel(std::vector<T> _user_ids)
+		{
+			return false;
+		}
+
+		template<>
+		bool API<const char*>::get_users_reel(std::vector<const char*> _user_ids)
+		{
+			auto _UIs = [=]() mutable noexcept -> const char* {
+				const char* _BUFF_temp = "";
+				auto _it = _user_ids.begin();
+				while (_it != _user_ids.end())
+				{
+					strcat((char*)_BUFF_temp, *_it++);
+					strcat((char*)_BUFF_temp, ",");
+				}
+				const char* _BUFF = "";
+				strncpy((char*)_BUFF, _BUFF_temp, sizeof(_BUFF_temp - 1));
+				return _BUFF;
+			};
+			DATA = NULL_map;
+			DATA = json_data( { "user_ids", _UIs } );
+			*TEMP_STR_PTR = NULL_str;
+			URL = NULL_str;
+			URL = ig::settings::ENDPOINTS::get_users_reel;
+			auto _RESULTS = send_request(URL, DATA);
+			_last_json = last_json();
+			if (_RESULTS)
+			{
+				if (_last_json["reels"])
+				{
+					return _last_json["reels"];
+				}
+				else
+				{
+					return {};
+				}
+			}
+		}
+
 
 
 
