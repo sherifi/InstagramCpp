@@ -1,8 +1,11 @@
 #pragma once
 
-#define None ""
+#define NULL_str ""
 #define NULL_vec {}
 #define NULL_map {}
+#define HEADERS_COUNT 16
+#define RECIPIENTS_COUNT 16
+#define RESULT_COUNT 16
 
 #include "ig_api_photo.h"
 #include "ig_api_video.h"
@@ -29,6 +32,7 @@
 #include <map>
 #include <queue>
 #include <stack>
+#include <limits>
 
 #include <cstdlib>
 #include <cstdio>
@@ -56,16 +60,15 @@ namespace ig
 		public:
 			//CTOR and DCTOR
 			API();
+			~API();
 			API(
 				log_Func_Callback,
-				T _device = None,
-				T _base_path = None,
+				T _device = NULL_str,
+				T _base_path = NULL_str,
 				bool _is_logged_in = false,
 				T _username = nullptr,
 				T _password = nullptr
-
 			);
-			~API();
 			//Utility
 			T generate_user_agent();
 			//Functions
@@ -74,38 +77,38 @@ namespace ig
 			void set_proxy(T _proxy);
 			T get_proxy(const std::vector<T>& _proxy_list);
 			bool login(T _username = nullptr, T _password = nullptr, bool _force = false, T _proxy = nullptr, bool _use_cookie = true, T _cookie_fname = nullptr, bool _is_threaded = true);
-			bool check_cookie(T _username = None, T _password = None, T _proxy = None);
-			bool load_cookie(T _cookie_fname = None);
-			bool save_cookie(T _fname = None);
-			bool save_successful_login(bool _use_cookie = false, T _cookie_fname = None);
+			bool check_cookie(T _username = NULL_str, T _password = NULL_str, T _proxy = NULL_str);
+			bool load_cookie(T _cookie_fname = NULL_str);
+			bool save_cookie(T _fname = NULL_str);
+			bool save_successful_login(bool _use_cookie = false, T _cookie_fname = NULL_str);
 			bool save_failed_password();
 			bool save_failed_login();
 			bool solve_challenge();
-			std::vector<T> get_challenge_choices();
+			T* get_challenge_choices();
 			bool logout();
-			T set_proxy();
-			bool send_request(T _endpoint, T _post = None, bool _login = false, bool _with_signature = true, T _headers = None);
+			T setup_proxy();
+			bool send_request(T _endpoint, T _post = NULL_str, bool _login = false, bool _with_signature = true, T _headers = NULL_str);
 			std::map<T, T> json_data(const std::map<T, T>& _data = NULL_map);
 			bool sync_features();
 			bool auto_complete_user_list();
 			bool get_timeline_feed();
 			bool get_megaphone_log();
 			bool expose();
-			void upload_photo(T _photo, T _caption = None, T _upload_id = None, bool _from_video = false, bool _force_resize = false, const std::map<T, T>& _options = {});
+			void upload_photo(T _photo, T _caption = NULL_str, T _upload_id = NULL_str, bool _from_video = false, bool _force_resize = false, const std::map<T, T>& _options = {});
 			void download_photo(T _media_id, T _filename, bool _media = false, T _folder = "photos");
 			void configure_photo(T _upload_id, T _photo, T _caption = "");
 			void download_story(T _filename, T _story_url, T _username);
 			void upload_story_photo(T _photo, T _upload_id);
 			void configure_story(T _photo, T _upload_id);
-			void upload_video(T _video, T _caption = None, T _upload_id = None, T _thumbnail = None, const std::map<T, T>& _options = NULL_map);
+			void upload_video(T _video, T _caption = NULL_str, T _upload_id = NULL_str, T _thumbnail = NULL_str, const std::map<T, T>& _options = NULL_map);
 			void download_video(T _media_id, T _filename, bool _media = false, T _folder = "video");
-			void configure_video(T _upload_id, T _video, T _thumbnail, T _width, T _height, T _duration, T _caption = None, const std::map<T, T>& _options = NULL_map);
-			bool edit_media(T _media_id, T _captionText = None);
+			void configure_video(T _upload_id, T _video, T _thumbnail, T _width, T _height, T _duration, T _caption = NULL_str, const std::map<T, T>& _options = NULL_map);
+			bool edit_media(T _media_id, T _captionText = NULL_str);
 			bool remove_self_tag(T _media_id);
 			bool media_info(T _media_id);
 			bool archive_media(const std::map<T, T>& _media = NULL_map, bool _undo = false);
 			bool delete_media(const std::map<T, T>& _media = NULL_map);
-			bool change_password(T _new_password = None);
+			bool change_password(T _new_password = NULL_str);
 			bool explore();
 			bool comment(T _media_id, T _comment_text);
 			bool reply_to_comment(T _media_id, T _comment_text, T _parent_comment_id);
@@ -123,76 +126,102 @@ namespace ig
 			bool get_self_geo_media();
 			bool sync_from_adress_book(T _contacts);
 			bool get_timeline();
-			bool get_user_feed(T _user_id, T _max_id = None, T _min_timestamp = None);
-			bool get_self_user_feed(T _max_id = None, T _min_timestamp = None);
-			bool get_hashtag_feed(T _hashtag = None, T _max_id = None);
-			bool get_location_feed(T _location_id = None, T _max_id = None);
+			bool get_user_feed(T _user_id, T _max_id = NULL_str, T _min_timestamp = NULL_str);
+			bool get_self_user_feed(T _max_id = NULL_str, T _min_timestamp = NULL_str);
+			bool get_hashtag_feed(T _hashtag = NULL_str, T _max_id = NULL_str);
+			bool get_location_feed(T _location_id = NULL_str, T _max_id = NULL_str);
 			bool get_popular_feed();
-			bool get_user_followings(T _user_id = None, T _max_id = None);
+			bool get_user_followings(T _user_id = NULL_str, T _max_id = NULL_str);
 			bool get_self_users_following();
-			bool get_user_followers(T _user_id = None, T _max_id = None);
+			bool get_user_followers(T _user_id = NULL_str, T _max_id = NULL_str);
 			bool get_self_user_followers();
-			bool like_comment(T _comment_id = None);
-			bool unlike_comment(T _comment_id = None);
-			bool like(T _media_id = None);
-			bool unlike(T _media_id = None);
-			bool get_media_comments(T _media_id = None, T _max_id = None);
+			bool like_comment(T _comment_id = NULL_str);
+			bool unlike_comment(T _comment_id = NULL_str);
+			bool like(T _media_id = NULL_str);
+			bool unlike(T _media_id = NULL_str);
+			bool get_media_comments(T _media_id = NULL_str, T _max_id = NULL_str);
 			bool get_direct_share();
-			bool follow(T _user_id = None);
-			bool unfollow(T _user_id = None);
-			bool block(T _user_id = None);
-			bool unblock(T _user_id = None);
-			bool user_friendship(T _user_id = None);
+			bool follow(T _user_id = NULL_str);
+			bool unfollow(T _user_id = NULL_str);
+			bool block(T _user_id = NULL_str);
+			bool unblock(T _user_id = NULL_str);
+			bool user_friendship(T _user_id = NULL_str);
 			bool send_direct_item(T _item_type, const std::vector<T>& _users, const std::map<T, T>& _options = {});
-			bool get_liked_media(T _max_id = None);
-			bool get_total_followers_or_followings(T _user_id, T _amount = None, T _which = "followers", bool _filter_private = false, bool _filter_business = false, bool _filter_verified = false, bool _usernames = false, T _to_file = None, bool _overwrite = false);
+			bool send_direct_item(T _item_type, T _users[], std::pair<T,T> _options[]);
+			bool get_total_liked_media(T _max_id = NULL_str);
+			bool get_total_followers_or_followings(T _user_id, T _amount = NULL_str, T _which = "followers", bool _filter_private = false, bool _filter_business = false, bool _filter_verified = false, bool _usernames = false, T _to_file = NULL_str, bool _overwrite = false);
+			bool get_total_followers(T _user_id, T _amount = NULL_str);
+			bool get_total_followings(T _user_id, T _amount = NULL_str);
+			bool get_total_user_feed(T _user_id, T _min_timestamp = NULL_str);
+			bool get_last_user_feed(T _user_id, T _amount, T _min_timestamp = NULL_str);
+			bool get_total_hashtag_feed(T _hashtag_str, T _amount = "100");
+			bool get_total_self_user_feed(T _min_timestamp = NULL_str);
+			bool get_total_self_followers();
+			bool get_total_self_followings();
+			bool get_total_liked_media(T _scan_rate = "1");
+			bool remove_profile_picture();
+			bool set_private_account();
+			bool set_public_account();
+			bool set_name_and_phone(T _name = NULL_str, T _phone = NULL_str);
+			bool get_profile_data();
+			bool edit_profile(T _url, T _phone, T _first_name, T _biography, T _email, T _gender);
+			bool fb_user_search(T _query);
+			bool search_users(T _query);
+			bool search_username(T _username);
+			bool search_tags(T _query);
+			bool search_location(T _query = NULL_str, T _lat = NULL_str, T _lng = NULL_str);
+			bool get_user_reel(T _user_id);
 
 
-			//
-			//
 		private:
-			T device = nullptr;
-			T base_path = nullptr;
-			std::map<T, std::map<T, T>> device_settings; //NULL_map
-			T user_agent = nullptr;
+			//bool login = false;
+			bool with_signature = false;
+			bool use_cookie = false;
 			bool is_logged_in = false;
-			T last_response = nullptr;
 			int total_requests = 0;
 			int total_challenge = 0;
-			//Setup logging
-			ig::settings::logger logger= ig::settings::logger();
-			JSON_TYPE last_json = nullptr;
+			T device = nullptr;
+			T base_path = nullptr;
+			T user_agent = nullptr;
+			T last_response = nullptr;
 			T username = nullptr;
 			T password = nullptr;
 			T uuid = nullptr;
 			T proxy = nullptr;
-			std::vector<T> _proxy_list = NULL_vec;
-			ig::settings::ig_login Login = ig::settings::ig_login();
 			T cookie_fname = nullptr;
-			std::tuple<T, T> usr_pass;
 			T device_id = nullptr;
 			T ig_username = nullptr;
 			T token = nullptr;
-			bool use_cookie = false;
+			T data = nullptr;
 			T cookie_username = nullptr;
-			std::vector<T> cookie_dict = NULL_vec;
 			T challenge_url = nullptr;
 			T post = nullptr;
 			T endpoint = nullptr;
-			Response response = nullptr;
 			T resp_json = nullptr;
-			std::map<T, T> cookie_map = NULL_map;
 			T user_id = nullptr;
-			ig::API::PHOTO::photo* PHOTO_ptr = nullptr;
-			ig::API::STORY::story* STORY_ptr = nullptr;
-			ig::API::VIDEO::video* VIDEO_ptr = nullptr;
-			std::map<T, T> DATA = NULL_map;
-			T URL;
+			T URL = nullptr;
 			T rank_token = nullptr;
 			T signature = nullptr;
 			T device_id = nullptr;
-			ig::settings::utility::Utility<T> utility;
+			T max_id = nullptr;
+			std::tuple<T, T> usr_pass;
+			std::vector<T> _proxy_list = NULL_vec;
+			std::vector<T> cookie_dict = NULL_vec;
+			std::map<T, T> device_settings = NULL_map;
+			std::map<T, T> cookie_map = NULL_map;
+			std::map<T, T> DATA = NULL_map;
+		//OWN SECTION
 		private:
+			JSON_TYPE last_json = nullptr;
+			Response response = nullptr;
+			ig::settings::logger<T> logger;
+			ig::settings::utility::Utility<T> Utility;
+			ig::settings::ig_login<T> Login;
+			ig::API::PHOTO::photo<T>* PHOTO_ptr = nullptr;
+			ig::API::STORY::story<T>* STORY_ptr = nullptr;
+			ig::API::VIDEO::video<T>* VIDEO_ptr = nullptr;
+		private:
+			std::FILE* _FILE;
 			std::fstream FILE;
 			std::ifstream FILE_IN;
 			std::ofstream FILE_OUT;

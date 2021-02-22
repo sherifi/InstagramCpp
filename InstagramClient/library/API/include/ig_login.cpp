@@ -90,7 +90,7 @@ namespace ig
 				{
 					std::cout << "ERROR opening the file: " << SECRET_FILE << std::endl;
 				}
-				if (username != None)
+				if (username != NULL_str)
 				{
 					for (auto it2 = login.begin(); it2 != login.end(); ++it2)
 					{

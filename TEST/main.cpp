@@ -34,14 +34,56 @@ const char* Test::set_url(const char* __url)
 	return *URL;
 }
 
+#define _2dARRAY 16
+
 int main()
 {
+	/*
+	unsigned int _2dARRAYsize = 64;
+	const char** _choices = (const char**)malloc(sizeof(char) * _2dARRAYsize);
+	printf("%d\n", sizeof(_choices));
+	*_choices = "first";
+	*(_choices + 1) = "second";
+	*(_choices + 2) = "three";
+	*(_choices + 3) = "four";
+	*(_choices + 4) = "five";
+
+	unsigned int _index = 0;
+	if (_2dARRAYsize > 10)
+	{
+		printf( "%s ", _choices[_index++]);
+		if (_2dARRAYsize > 10)
+		{
+			printf( "%s ", _choices[_index++]);
+		}
+		if (_2dARRAYsize > 30)
+		{
+			printf("%s ", _choices[_index++]);
+		}
+		printf("%s ", _choices[_index++]);
+	}
+	*/
+	/*
+	for (int i = 0; i < 5; ++i)
+	{
+		std::cout << _choices[i] << std::endl;
+	}
+	*/
+
+	/*
+	while (*_choices) {
+		std::cout << *_choices++ << std::endl;
+	}
+	*/
+	
+	/*
 	char _BUFF1[32] = "First buff.";
 	char _BUFF2[32] = "Second buff.";
 
 	strcpy(_BUFF1, _BUFF2);
 	printf("%s\n", _BUFF1);
 	printf("%s\n", _BUFF2);
+	*/
 
 	/*
 	std::string str8 = "en espa\xc3\xb1ol";

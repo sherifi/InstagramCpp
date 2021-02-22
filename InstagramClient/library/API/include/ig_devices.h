@@ -7,10 +7,11 @@ namespace ig
 {
 	namespace settings
 	{
+		template <typename T>
+		static T DEFAULT_DEVICE = "samsung_galaxy_s9_plus";
 
-		static const char* DEFAULT_DEVICE = "samsung_galaxy_s9_plus";
-
-		static const std::map<const char*, std::map<const char*, const char*>> DEVICES = {
+		template <typename T>
+		static const std::map<T, std::map<T, T>> DEVICES = {
 			{
 				//Released on March 2016
 				"samsung_galaxy_s7",
@@ -118,7 +119,8 @@ namespace ig
 			}
 		};
 
-		static const std::map<const char*, std::map<const char*, const char*>> DEVICES_EXPERIMENTAL = {
+		template <typename T>
+		static const std::map<T, std::map<T, T>> DEVICES_EXPERIMENTAL = {
 			{
 				"device_001",
 				{

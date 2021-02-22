@@ -11,11 +11,16 @@ namespace ig
 {
 	namespace settings
 	{
-		static const char* API_URL = "https://i.instagram.com/api/v1/";
-		static const char* USER_AGENT_BASE = "Instagram {instagram_version} Android ({android_version}/{android_release}; {dpi}; {resolution}; {manufacturer}; {device}; {model}; {cpu}; en_US)";
-		static const char* SIG_KEY_VERSION = "4";
-		static const char* IG_SIG_KEY = "c36436a942ea1dbb40d7f2d7d45280a620d991ce8c62fb4ce600f0a048c32c11";
-		static const std::map<const char*, const char*> REQUEST_HEADERS = {
+		template <typename T>
+		static T API_URL = "https://i.instagram.com/api/v1/";
+		template <typename T>
+		static T USER_AGENT_BASE = "Instagram {instagram_version} Android ({android_version}/{android_release}; {dpi}; {resolution}; {manufacturer}; {device}; {model}; {cpu}; en_US)";
+		template <typename T>
+		static T SIG_KEY_VERSION = "4";
+		template <typename T>
+		static T IG_SIG_KEY = "c36436a942ea1dbb40d7f2d7d45280a620d991ce8c62fb4ce600f0a048c32c11";
+		template <typename T>
+		static const std::map<T, T> REQUEST_HEADERS = {
 			{"Connection", "Keep-Alive"},
 			{"X-IG-Capabilities", "3brTBw=="}, //base64.b64encode(struct.pack('<i', 131316445)).decode('ascii')
 			{"X-IG-Connection-Type", "WIFI"},
@@ -26,7 +31,8 @@ namespace ig
 			{"Content-type", "application/x-www-form-urlencoded; charset=UTF-8"},
 			{"Cookie2", "$Version=1"}
 		};
-		static const std::vector<const char*> EXPERIMENTS = {
+		template <typename T>
+		static const std::vector<T> EXPERIMENTS = {
 			"ig_android_disk_cache_match_journal_size_to_cache_max_count",
 			"ig_android_ad_move_carousel_indicator_to_ufi_universe",
 			"ig_android_universe_video_production",
@@ -210,7 +216,8 @@ namespace ig
 			"ig_android_insta_video_abr_resize,ig_android_insta_video_sound_always_on",
 			"ig_android_disable_comment"
 		};
-		static const std::vector<std::map<const char*, const char*>> SUPPORTED_CAPABILITIES = {
+		template <typename T>
+		static const std::map<T, T> SUPPORTED_CAPABILITIES = {
 			{"name", "SUPPORTED_SDK_VERSIONS"},
 			{"value", "13.0,14.0,15.0,16.0,17.0,18.0,19.0,20.0,21.0,22.0,23.0,24.0,25.0,26.0,27.0,28.0,29.0,30.0,31.0,32.0,33.0,34.0,35.0,36.0,37.0,38.0,39.0,40.0,41.0,42.0,43.0,44.0,45.0,46.0,47.0,48.0,49.0,50.0,51.0,52.0,53.0"},
 			{"name", "FACE_TRACKER_VERSION"},

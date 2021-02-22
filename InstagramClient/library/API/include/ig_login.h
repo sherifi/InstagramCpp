@@ -1,6 +1,6 @@
 #pragma once
 
-#define None ""
+#define NULL_str ""
 
 #include <string>
 #include <vector>
@@ -22,7 +22,7 @@ namespace ig
 			ig_login();
 			~ig_login();
 			void add_credentials();
-			std::tuple<T, T> get_credentials(T username = None);
+			std::tuple<T, T> get_credentials(T username = NULL_str);
 			bool check_secret();
 			void print_credentials();
 			void delete_credentials();

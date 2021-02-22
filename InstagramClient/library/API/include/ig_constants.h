@@ -55,7 +55,19 @@ namespace ig
 			static const char* unblock = "friendships/unblock/{user_id}/";
 			static const char* user_friendship = "friendships/show/{user_id}/";
 			static const char* send_direct_item = "direct_v2/threads/broadcast/{}/";
-			static const char* get_liked_media = "feed/liked/?max_id={max_id}";
+			static const char* get_total_liked_media = "feed/liked/?max_id={max_id}";
+			static const char* remove_profile_picture = "accounts/remove_profile_picture/";
+			static const char* set_private_account = "accounts/set_private/";
+			static const char* set_public_account = "accounts/set_public/";
+			static const char* set_name_and_phone = "accounts/set_phone_and_name/";
+			static const char* get_profile_data = "accounts/current_user/?edit=true";
+			static const char* edit_profile = "accounts/edit_profile/";
+			static const char* fb_user_search = "fbsearch/topsearch/?context=blended&query={query}&rank_token={rank_token}";
+			static const char* search_users = "users/search/?ig_sig_key_version={sig_key}&is_typeahead=true&query={query}&rank_token={rank_token}";
+			static const char* search_username = "users/{username}/usernameinfo/";
+			static const char* search_tags = "tags/search/?is_typeahead=true&q={query}&rank_token={rank_token}";
+			static const char* search_location = "fbsearch/places/?rank_token={rank_token}&query={query}&lat={lat}&lng={lng}";
+			static const char* get_user_reel = "feed/user/{}/reel_media/";
 		} // ENDPOINTS
 	} //settings
 } // ig

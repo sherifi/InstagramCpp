@@ -110,7 +110,7 @@ namespace ig
 				std::unique_ptr< std::map<const char*, const char*>> result = std::make_unique<std::map<const char*, const char*>>();
 				result->insert("users", __users);
 				const char* _TEMP_str = "";
-				if (_thread_id != None)
+				if (_thread_id != NULL_str)
 				{
 					if (_use_quotes)
 					{
@@ -284,6 +284,74 @@ namespace ig
 					}
 				}
 				return _BUFF;
+			}
+
+			template<typename T>
+			int Utility<T>::count_word(T _BUFF, T _word)
+			{
+
+			}
+
+			template<>
+			int Utility<const char*>::count_word(const char* _BUFF, const char* _word)
+			{
+				//Counting the number of times old word occur in the string
+				int _count = 0;
+				int _word_len = strlen(_word);
+				for (int i = 0; _BUFF[i] != '\0'; ++i)
+				{
+					if (strstr(&_BUFF[i], _word) == &_BUFF[i])
+					{
+						_count++;
+						//Jump to index after the old word.
+						i += _word_len - 1;
+					}
+				}
+				return _count;
+			}
+
+			template<typename T>
+			T Utility<T>::replace_word(T _BUFF, T _oldW, T _newW)
+			{
+			}
+
+			template<>
+			const char* Utility<const char*>::replace_word(const char* _BUFF, const char* _oldW, const char* _newW)
+			{
+				/*
+				auto a = _BUFF;
+				auto b = &_BUFF;
+				auto c = &_BUFF[1];
+				auto d = *_BUFF;
+				auto e = _BUFF[1];
+				//
+				auto a1 = result;
+				auto b1 = &result;
+				auto c2 = &result[1];
+				auto d1 = *result;
+				auto e1 = result[1];
+				*/
+				char* result;
+				int i = 0;
+				int newWlen = strlen(_newW);
+				int oldWlen = strlen(_oldW);
+				//Making new string of enought length
+				result = (char*)malloc(strlen(_BUFF) + count_word(_BUFF, _oldW) * (newWlen - oldWlen));
+				while (*_BUFF)
+				{
+					if (strstr(_BUFF, _oldW) == _BUFF)
+					{
+						strcpy(&result[i], _newW);
+						i += newWlen;
+						_BUFF += oldWlen;
+					}
+					else
+					{
+						result[i++] = *_BUFF++;
+					}
+				}
+				result[i] = '\0';
+				return result;
 			}
 		} //utility
 	} //settings
