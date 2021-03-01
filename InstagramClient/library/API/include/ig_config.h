@@ -14,6 +14,8 @@ namespace ig
 		template <typename T>
 		static T API_URL = "https://i.instagram.com/api/v1/";
 		template <typename T>
+		static T APIv2_URL = "https://i.instagram.com/api/v2/";
+		template <typename T>
 		static T USER_AGENT_BASE = "Instagram {instagram_version} Android ({android_version}/{android_release}; {dpi}; {resolution}; {manufacturer}; {device}; {model}; {cpu}; en_US)";
 		template <typename T>
 		static T SIG_KEY_VERSION = "4";

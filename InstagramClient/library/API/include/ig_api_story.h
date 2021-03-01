@@ -12,12 +12,12 @@ namespace ig
 		namespace STORY
 		{
 			template <typename T>
-			class story
+			class Story
 			{
 			public:
 				//CTOR and DCTOR
-				story();
-				~story();
+				Story();
+				~Story();
 				//Main functions section
 				void download_story(T _filename = NULL_str, T _story_url = NULL_str, T _username = NULL_str);
 				void upload_story_photo(T _photo = NULL_str, T _upload_id = NULL_str);

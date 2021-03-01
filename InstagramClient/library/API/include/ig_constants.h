@@ -69,6 +69,29 @@ namespace ig
 			static const char* search_location = "fbsearch/places/?rank_token={rank_token}&query={query}&lat={lat}&lng={lng}";
 			static const char* get_user_reel = "feed/user/{}/reel_media/";
 			static const char* get_users_reel = "feed/reels_media/";
+			static const char* see_reels = "media/seen/";
+			static const char* get_user_stories = "feed/user/{}/story/";
+			static const char* get_self_story_viewers = "media/{}/list_reel_media_viewer/?supported_capabilities_new={}";
+			static const char* get_tv_suggestions = "igtv/tv_guide/";
+			static const char* get_hashtag_stories = "tags/{}/story/";
+			static const char* follow_hashtag = "tags/follow/{}/";
+			static const char* unfollow_hashtag = "tags/unfollow/{}/";
+			static const char* get_tags_followed_by_user = "users/{}/following_tags_info/";
+			static const char* get_hashtag_sections = "tags/{}/sections/";
+			static const char* get_media_insight = "insights/media_organic_insights/{}/?ig_sig_key_version={}";
+			static const char* get_self_insight = "insights/account_organic_insights/?show_promotions_in_landing_page=true&first={}";
+			static const char* save_media = "media/{}/save/";
+			static const char* unsave_media = "media/{}/unsave/";
+			static const char* get_saved_medias = "feed/saved/";
+			static const char* mute_user = "friendships/mute_posts_or_story_from_follow/";
+			static const char* unmute_user = "friendships/unmute_posts_or_story_from_follow/";
+			static const char* get_pending_friendships = "friendships/pending/";
+			static const char* approve_pending_friendship = "friendships/approve/{}/";
+			static const char* reject_pending_friendship = "friendships/ignore/{}/";
+			static const char* get_pending_inbox = "direct_v2/pending_inbox/?persistentBadging=true&use_unified_inbox=true";
+			static const char* approve_pending_thread = "direct_v2/threads/{}/approve/";
+			static const char* configure_photo = "media/configure/?";
+			static const char* upload_photo = "upload/photo/";
 		} // ENDPOINTS
 	} //settings
 } // ig

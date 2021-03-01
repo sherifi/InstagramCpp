@@ -3880,7 +3880,434 @@ namespace ig
 			}
 		}
 
+		template<typename T>
+		bool API<T>::see_reels(std::vector<T> _reels)
+		{
+			return false;
+		}
 
+		template<>
+		bool API<const char*>::see_reels(std::vector<const char*> _reels)
+		{
+			std::map<const char*, const char*> _story_seen;
+			time_t _now;
+			time_t _t = time(&_now);
+			const char* _time = ctime(&_t);
+			for (unsigned int _it = 0; _it <= _reels.size(); ++_it)
+			{
+				auto _story = _reels[_it];
+				_sleep(10000);
+				time_t __now = time(&_now);
+				long long _story_seen_at = (long long)__now - std::min((_it + 1 + (rand() % 3)), (std::max(0, __now - _story["taken_at"])));
+				const char* _story_id;
+				sprintf((char*)_story_id, "0%s_1%s", _story["id"], _story["user"]["pk"]);
+				const char* _story_seen_time;
+				sprintf((char*)_story_seen_time, "0%s_1%s", _story["taken_at"], _story_seen_time);
+				_story_seen[_story_id] = _story_seen_at;
+			}
+			DATA = NULL_map;
+			DATA = json_data({ "reels", _story_seen }, { "_csrftoken", token }, { "_uuid", uuid }, { "_uid", user_id });
+			DATA = Utility.generate_signature(DATA);
+			URL = NULL_str;
+			URL = ig::settings::ENDPOINTS::see_reels;
+			return session.post(strcat((char*)ig::settings::APIv2_URL<const char*>, URL), DATA);
+		}
+
+		template<typename T>
+		bool API<T>::get_user_stories(T _user_id)
+		{
+			return false;
+		}
+
+		template<>
+		bool API<const char*>::get_user_stories(const char* _user_id)
+		{
+			DATA = NULL_map;
+			DATA = json_data();
+			*TEMP_STR_PTR = NULL_str;
+			*TEMP_STR_PTR = "{}";
+			URL = NULL_str;
+			URL = ig::settings::ENDPOINTS::get_user_stories;
+			Utility.replace_word(URL, *TEMP_STR_PTR, _user_id);
+			return send_request(URL, DATA);
+		}
+
+		template<typename T>
+		bool API<T>::get_self_story_viewers(T _story_id)
+		{
+			return false;
+		}
+
+		template<>
+		bool API<const char*>::get_self_story_viewers(const char* _story_id)
+		{
+			DATA = NULL_map;
+			DATA = json_data();
+			*TEMP_STR_PTR = NULL_str;
+			*TEMP_STR_PTR = "{}";
+			URL = NULL_str;
+			URL = ig::settings::ENDPOINTS::get_self_story_viewers;
+			Utility.replace_word(URL, *TEMP_STR_PTR, _story_id);
+			*TEMP_STR_PTR = "{}";
+			Utility.replace_word(URL, *TEMP_STR_PTR, ig::settings::SUPPORTED_CAPABILITIES<const char*, const char*>);
+			return send_request(URL, DATA);
+		}
+
+		template<typename T>
+		bool API<T>::get_tv_suggestions()
+		{
+			return false;
+		}
+
+		template<>
+		bool API<const char*>::get_tv_suggestions()
+		{
+			DATA = NULL_map;
+			DATA = json_data();
+			*TEMP_STR_PTR = NULL_str;
+			*TEMP_STR_PTR = "{}";
+			URL = NULL_str;
+			URL = ig::settings::ENDPOINTS::get_tv_suggestions;
+			return send_request(URL, DATA);
+		}
+
+		template<typename T>
+		bool API<T>::get_hashtag_stories(T _hashtag)
+		{
+			return false;
+		}
+
+		template<>
+		bool API<const char*>::get_hashtag_stories(const char* _hashtag)
+		{
+			DATA = NULL_map;
+			DATA = json_data();
+			*TEMP_STR_PTR = NULL_str;
+			*TEMP_STR_PTR = "{}";
+			URL = NULL_str;
+			URL = ig::settings::ENDPOINTS::get_tv_suggestions;
+			Utility.replace_word(URL, *TEMP_STR_PTR, _hashtag);
+			return send_request(URL, DATA);
+		}
+
+		template<typename T>
+		bool API<T>::follow_hashtag(T _hashtag)
+		{
+			return false;
+		}
+
+		template<>
+		bool API<const char*>::follow_hashtag(const char* _hashtag)
+		{
+			DATA = NULL_map;
+			DATA = json_data();
+			*TEMP_STR_PTR = NULL_str;
+			*TEMP_STR_PTR = "{}";
+			URL = NULL_str;
+			URL = ig::settings::ENDPOINTS::follow_hashtag;
+			Utility.replace_word(URL, *TEMP_STR_PTR, _hashtag);
+			return send_request(URL, DATA);
+		}
+
+		template<typename T>
+		bool API<T>::unfollow_hashtag(T _hashtag)
+		{
+			return false;
+		}
+
+		template<>
+		bool API<const char*>::unfollow_hashtag(const char* _hashtag)
+		{
+			DATA = NULL_map;
+			DATA = json_data();
+			*TEMP_STR_PTR = NULL_str;
+			*TEMP_STR_PTR = "{}";
+			URL = NULL_str;
+			URL = ig::settings::ENDPOINTS::unfollow_hashtag;
+			Utility.replace_word(URL, *TEMP_STR_PTR, _hashtag);
+			return send_request(URL, DATA);
+		}
+
+		template<typename T>
+		bool API<T>::get_tags_followed_by_user(T _user_id)
+		{
+			return false;
+		}
+
+		template<>
+		bool API<const char*>::get_tags_followed_by_user(const char* _user_id)
+		{
+			DATA = NULL_map;
+			DATA = json_data();
+			*TEMP_STR_PTR = NULL_str;
+			*TEMP_STR_PTR = "{}";
+			URL = NULL_str;
+			URL = ig::settings::ENDPOINTS::get_tags_followed_by_user;
+			Utility.replace_word(URL, *TEMP_STR_PTR, _user_id);
+			return send_request(URL, DATA);
+		}
+
+		template<typename T>
+		bool API<T>::get_hashtag_sections(T _hashtag)
+		{
+			return false;
+		}
+
+		template<>
+		bool API<const char*>::get_hashtag_sections(const char* _hashtag)
+		{
+			DATA = NULL_map;
+			DATA = json_data({ "supported_tabs", "[\"top\",\"recent\",\"places]\"" }, { "include_persistent", "true" });
+			*TEMP_STR_PTR = NULL_str;
+			*TEMP_STR_PTR = "{}";
+			URL = NULL_str;
+			URL = ig::settings::ENDPOINTS::get_hashtag_sections;
+			Utility.replace_word(URL, *TEMP_STR_PTR, _hashtag);
+			return send_request(URL, DATA);
+		}
+
+		template<typename T>
+		bool API<T>::get_media_insight(T _media_id)
+		{
+			return false;
+		}
+
+		template<>
+		bool API<const char*>::get_media_insight(const char* _media_id)
+		{
+			DATA = NULL_map;
+			DATA = json_data();
+			*TEMP_STR_PTR = NULL_str;
+			*TEMP_STR_PTR = "{}";
+			URL = NULL_str;
+			URL = ig::settings::ENDPOINTS::get_media_insight;
+			Utility.replace_word(URL, *TEMP_STR_PTR, _hashtag);
+			*TEMP_STR_PTR = "{}";
+			Utility.replace_word(URL, *TEMP_STR_PTR, _hashtag);
+			return send_request(URL, DATA);
+		}
+
+		template<typename T>
+		bool API<T>::get_self_insight()
+		{
+			return false;
+		}
+
+		template<>
+		bool API<const char*>::get_self_insight()
+		{
+			DATA = NULL_map;
+			DATA = json_data();
+			*TEMP_STR_PTR = NULL_str;
+			*TEMP_STR_PTR = "{}";
+			URL = NULL_str;
+			URL = ig::settings::ENDPOINTS::get_self_insight;
+			Utility.replace_word(URL, *TEMP_STR_PTR, _hashtag);
+			return send_request(URL, DATA);
+		}
+
+		template<typename T>
+		bool API<T>::save_media(T _media_id)
+		{
+			return false;
+		}
+
+		template<>
+		bool API<const char*>::save_media(const char* _media_id)
+		{
+			DATA = NULL_map;
+			DATA = json_data();
+			*TEMP_STR_PTR = NULL_str;
+			*TEMP_STR_PTR = "{}";
+			URL = NULL_str;
+			URL = ig::settings::ENDPOINTS::save_media;
+			Utility.replace_word(URL, *TEMP_STR_PTR, _media_id);
+			return send_request(URL, DATA);
+		}
+
+		template<typename T>
+		bool API<T>::unsave_media(T _media_id)
+		{
+			return false;
+		}
+
+		template<>
+		bool API<const char*>::unsave_media(const char* _media_id)
+		{
+			DATA = NULL_map;
+			DATA = json_data();
+			*TEMP_STR_PTR = NULL_str;
+			*TEMP_STR_PTR = "{}";
+			URL = NULL_str;
+			URL = ig::settings::ENDPOINTS::unsave_media;
+			Utility.replace_word(URL, *TEMP_STR_PTR, _media_id);
+			return send_request(URL, DATA);
+		}
+
+		template<typename T>
+		bool API<T>::get_saved_medias()
+		{
+			return false;
+		}
+
+		template<>
+		bool API<const char*>::get_saved_medias()
+		{
+			DATA = NULL_map;
+			DATA = json_data();
+			*TEMP_STR_PTR = NULL_str;
+			*TEMP_STR_PTR = "{}";
+			URL = NULL_str;
+			URL = ig::settings::ENDPOINTS::get_saved_medias;
+			return send_request(URL, DATA);
+		}
+
+		template<typename T>
+		bool API<T>::mute_user(T _user, bool _mute_story, bool _mute_posts)
+		{
+			return false;
+		}
+
+		template<>
+		bool API<const char*>::mute_user(const char* _user, bool _mute_story, bool _mute_posts)
+		{
+			std::vector<const char*> _data_dict;
+			if (_mute_posts)
+			{
+				_data_dict["target_posts_author_id"] = _user;
+			}
+			if (_mute_story)
+			{
+				_data_dict["target_posts_author_id"] = _user;
+			}
+			DATA = NULL_map;
+			DATA = json_data( _data_dict );
+			*TEMP_STR_PTR = NULL_str;
+			*TEMP_STR_PTR = "{}";
+			URL = NULL_str;
+			URL = ig::settings::ENDPOINTS::mute_user;
+			return send_request(URL, DATA);
+		}
+
+		template<typename T>
+		bool API<T>::unmute_user(T _user, bool _unmute_story, bool _unmute_posts)
+		{
+			return false;
+		}
+
+		template<>
+		bool API<const char*>::unmute_user(const char* _user, bool _unmute_story, bool _unmute_posts)
+		{
+			std::vector<const char*> _data_dict;
+			if (_unmute_posts)
+			{
+				_data_dict["target_posts_author_id"] = _user;
+			}
+			if (_unmute_story)
+			{
+				_data_dict["target_posts_author_id"] = _user;
+			}
+			DATA = NULL_map;
+			DATA = json_data(_data_dict);
+			*TEMP_STR_PTR = NULL_str;
+			*TEMP_STR_PTR = "{}";
+			URL = NULL_str;
+			URL = ig::settings::ENDPOINTS::unmute_user;
+			return send_request(URL, DATA);
+		}
+
+		template<typename T>
+		bool API<T>::get_pending_friendships()
+		{
+			return false;
+		}
+
+		template<>
+		bool API<const char*>::get_pending_friendships()
+		{
+			DATA = NULL_map;
+			DATA = json_data();
+			*TEMP_STR_PTR = NULL_str;
+			*TEMP_STR_PTR = "{}";
+			URL = NULL_str;
+			URL = ig::settings::ENDPOINTS::get_pending_friendships;
+			return send_request(URL, DATA);
+		}
+
+		template<typename T>
+		bool API<T>::approve_pending_friendship(T _user_id)
+		{
+			return false;
+		}
+
+		template<>
+		bool API<const char*>::approve_pending_friendship(const char* _user_id)
+		{
+			DATA = NULL_map;
+			DATA = json_data({ "_uuid", uuid }, { "_uid", user_id }, { "user_id", _user_id }, {"_csrftoken", token });
+			*TEMP_STR_PTR = NULL_str;
+			*TEMP_STR_PTR = "{}";
+			URL = NULL_str;
+			URL = ig::settings::ENDPOINTS::approve_pending_friendship;
+			Utility.replace_word(URL, *TEMP_STR_PTR, _user_id);
+			return send_request(URL, DATA);
+		}
+
+		template<typename T>
+		bool API<T>::reject_pending_friendship(T _user_id)
+		{
+			return false;
+		}
+
+		template<>
+		bool API<const char*>::reject_pending_friendship(const char* _user_id)
+		{
+			DATA = NULL_map;
+			DATA = json_data({ "_uuid", uuid }, { "_uid", user_id }, { "user_id", _user_id }, { "_csrftoken", token });
+			*TEMP_STR_PTR = NULL_str;
+			*TEMP_STR_PTR = "{}";
+			URL = NULL_str;
+			URL = ig::settings::ENDPOINTS::reject_pending_friendship;
+			Utility.replace_word(URL, *TEMP_STR_PTR, _user_id);
+			return send_request(URL, DATA);
+		}
+
+		template<typename T>
+		bool API<T>::get_pending_inbox()
+		{
+			return false;
+		}
+
+		template<>
+		bool API<const char*>::get_pending_inbox()
+		{
+			DATA = NULL_map;
+			DATA = json_data();
+			*TEMP_STR_PTR = NULL_str;
+			*TEMP_STR_PTR = "{}";
+			URL = NULL_str;
+			URL = ig::settings::ENDPOINTS::get_pending_inbox;
+			return send_request(URL, DATA);
+		}
+
+		template<typename T>
+		bool API<T>::approve_pending_thread(T _thread_id)
+		{
+			return false;
+		}
+
+		template<>
+		bool API<const char*>::approve_pending_thread(const char* _thread_id)
+		{
+			DATA = NULL_map;
+			DATA = json_data({ "_uuid", uuid }, { "_uid", user_id }, { "_csrftoken", token });
+			*TEMP_STR_PTR = NULL_str;
+			*TEMP_STR_PTR = "{}";
+			URL = NULL_str;
+			URL = ig::settings::ENDPOINTS::approve_pending_thread;
+			Utility.replace_word(URL, *TEMP_STR_PTR, _thread_id);
+			return send_request(URL, DATA);
+		}
 
 
 	} //namespace API

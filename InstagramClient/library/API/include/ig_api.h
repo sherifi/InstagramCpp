@@ -57,6 +57,8 @@ namespace ig
 		template<typename T>
 		class API
 		{
+		private:
+			friend class ig_api_phot
 		public:
 			//CTOR and DCTOR
 			API();
@@ -172,6 +174,27 @@ namespace ig
 			bool search_location(T _query = NULL_str, T _lat = NULL_str, T _lng = NULL_str);
 			bool get_user_reel(T _user_id);
 			bool get_users_reel(std::vector<T> _user_ids);
+			bool see_reels(std::vector<T> _reels);
+			bool get_user_stories(T _user_id);
+			bool get_self_story_viewers(T _story_id);
+			bool get_tv_suggestions();
+			bool get_hashtag_stories(T _hashtag);
+			bool follow_hashtag(T _hashtag);
+			bool unfollow_hashtag(T _hashtag);
+			bool get_tags_followed_by_user(T _user_id);
+			bool get_hashtag_sections(T _hashtag);
+			bool get_media_insight(T _media_id);
+			bool get_self_insight();
+			bool save_media(T _media_id);
+			bool unsave_media(T _media_id);
+			bool get_saved_medias();
+			bool mute_user(T _user, bool _mute_story = false, bool _mute_posts = false);
+			bool unmute_user(T _user, bool _unmute_story = false, bool _unmute_posts = false);
+			bool get_pending_friendships();
+			bool approve_pending_friendship(T _user_id);
+			bool reject_pending_friendship(T _user_id);
+			bool get_pending_inbox();
+			bool approve_pending_thread(T _thread_id);
 
 
 
@@ -213,15 +236,16 @@ namespace ig
 			std::map<T, T> cookie_map = NULL_map;
 			std::map<T, T> DATA = NULL_map;
 		//OWN SECTION
+		protected:
+			ig::settings::Logger<T> logger;
 		private:
 			JSON_TYPE last_json = nullptr;
 			Response response = nullptr;
-			ig::settings::logger<T> logger;
 			ig::settings::utility::Utility<T> Utility;
 			ig::settings::ig_login<T> Login;
-			ig::API::PHOTO::photo<T>* PHOTO_ptr = nullptr;
-			ig::API::STORY::story<T>* STORY_ptr = nullptr;
-			ig::API::VIDEO::video<T>* VIDEO_ptr = nullptr;
+			ig::API::PHOTO::Photo<T>* PHOTO_ptr = nullptr;
+			ig::API::STORY::Story<T>* STORY_ptr = nullptr;
+			ig::API::VIDEO::Video<T>* VIDEO_ptr = nullptr;
 		private:
 			std::FILE* _FILE;
 			std::fstream FILE;

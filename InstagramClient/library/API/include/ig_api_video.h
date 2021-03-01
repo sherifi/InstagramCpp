@@ -12,12 +12,12 @@ namespace ig
 		namespace VIDEO
 		{
 			template <typename T>
-			class video
+			class Video
 			{
 			public:
 				//CTOR and DCTOR
-				video();
-				~video();
+				Video();
+				~Video();
 				//Main functions section
 				void download_video(T _media_id = NULL_str, T _filename = NULL_str, bool _media = false, T _folder = "videos");
 				void get_video_info(T _filename = NULL_str);

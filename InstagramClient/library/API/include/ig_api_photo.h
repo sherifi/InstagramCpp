@@ -1,9 +1,10 @@
 #pragma once
 
-#define NULL_str ""
-#define NULL_map {"", ""}
+#include "ig_api.h"
+
 #include <string>
 #include <map>
+#include <cstdio>
 
 namespace ig
 {
@@ -12,17 +13,17 @@ namespace ig
 		namespace PHOTO
 		{
 			template <typename T>
-			class photo
+			class Photo : public ig::API::API<const char*>
 			{
 			public:
 				//CTOR and DCTOR
-				photo();
-				~photo();
+				Photo();
+				~Photo();
 				//Main functions section
-				void download_photo(T _media_id, T _filename, bool _media = false, T _folder = "photos");
-				void compatible_spect_ratio(float _size);
-				void configure_photo(T _upload_id, T _photo, T _caption);
-				void upload_photo(T _photo = NULL_str, T _caption = NULL_str, T _upload_id = NULL_str, bool _from_video = false, bool _force_resize = false, std::map<T, T> _options = NULL_map);
+				bool download_photo(T _media_id, T _filename, bool _media = false, T _folder = "photos");
+				bool compatible_spect_ratio(std::pair<T, T> _size);
+				void configure_photo(T _upload_id , T _photo, T _caption);
+				bool upload_photo(T _photo, T _caption, T _upload_id, bool _from_video = false, bool _force_resize = false, T _options = NULL_str);
 				void get_image_size(T _fname);
 				void resize_image(T _fname);
 				void stories_shaper(T _fname);
@@ -30,7 +31,25 @@ namespace ig
 				void get_media_info(T _media_id);
 			protected:
 			private:
+				T media_id;
+				T filename;
+				T path;
+				T folder;
+				std::pair<T, T> size;
+				T upload_id;
+				T photo;
+				T caption;
+				bool from_video;
+				bool force_resize;
+				T options;
+				T fname;
 				T media_info;
+				T media;
+				FILE* _FILE;
+				Response<T> Response;
+				T DATA;
+				rapidjson::Document DOC;
+				rapidjson::Value VAL;
 			};
 		}
 	}

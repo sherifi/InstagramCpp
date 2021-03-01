@@ -24,11 +24,11 @@ namespace ig
 		const char* stringfy_logg(const logger_level& _level);
 
 		template <typename T>
-		class logger
+		class Logger
 		{
 		public:
-			logger();
-			~logger();
+			Logger();
+			~Logger();
 			void Log(const logger_level& _level, T _mssg);
 		};
 	}

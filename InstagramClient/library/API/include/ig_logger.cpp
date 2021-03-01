@@ -30,22 +30,22 @@ namespace ig
 		}
 
 		template <typename T>
-		logger<T>::logger()
+		Logger<T>::Logger()
 		{
 		}
 
 		template <typename T>
-		logger<T>::~logger()
+		Logger<T>::~Logger()
 		{
 		}
 
 		template<typename T>
-		void logger<T>::Log(const logger_level& _level, T _mssg)
+		void Logger<T>::Log(const logger_level& _level, T _mssg)
 		{
 		}
 
 		template<>
-		void logger<std::string&&>::Log(const logger_level& _level, std::string&& _mssg)
+		void Logger<std::string&&>::Log(const logger_level& _level, std::string&& _mssg)
 		{
 			switch (_level)
 			{
@@ -71,7 +71,7 @@ namespace ig
 		}
 
 		template<>
-		void logger<const char*>::Log(const logger_level& _level, const char* _mssg)
+		void Logger<const char*>::Log(const logger_level& _level, const char* _mssg)
 		{
 			switch (_level)
 			{
