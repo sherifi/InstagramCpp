@@ -136,12 +136,12 @@ namespace ig
 			}
 
 			template<typename T>
-			bool Photo<T>::compatible_spect_ratio(std::pair<T, T> _size)
+			bool Photo<T>::compatible_aspect_ratio(std::pair<T, T> _size)
 			{
 			}
 
 			template<>
-			bool Photo<float>::compatible_spect_ratio(std::pair<float, float> _size)
+			bool Photo<float>::compatible_aspect_ratio(std::pair<float, float> _size)
 			{
 				std::pair<float, float> _min_max_ratio = std::make_pair<float, float>(4.0 / 5.0, 90.0 / 47.0);
 				std::pair<float, float> _width_height = _size;
@@ -151,12 +151,12 @@ namespace ig
 			}
 
 			template<typename T>
-			void Photo<T>::configure_photo(T _upload_id, T _photo, T _caption)
+			bool Photo<T>::configure_photo(T _upload_id, T _photo, T _caption)
 			{
 			}
 
 			template<>
-			void Photo<const char*>::configure_photo(const char* _upload_id, const char* _photo, const char* _caption)
+			bool Photo<const char*>::configure_photo(const char* _upload_id, const char* _photo, const char* _caption)
 			{
 				std::pair<float, float> _width_height = get_image_size(_photo);
 				const char* _DATA;
@@ -238,8 +238,92 @@ namespace ig
 				sprintf((char*)_HEADERS, "{'X-IG-Capabilities': '3Q4=', 'X-IG-Connection-Type': 'WIFI', 'Cookie2' : '$Version=1', 'Accept-Language' : 'en-US', 'Accept-Encoding' : 'gzip, deflate', 'Content-type' : %s, 'Connection' : 'close', 'User-Agent' : %s }", _m.content_type, user_agent);
 				session.headers.update(_HEADERS);
 				Response = session.post(strcat(ig::settings::API_URL<char*>, ig::settings::ENDPOINTS::upload_photo), _m);
+				rapidjson::StringStream* SS = new rapidjson::StringStream(_options);
+				if (!DOC.HasParseError())
+				{
+					DOC.ParseStream(*SS);
+					delete SS;
+				}
+				else
+				{
+					const char* _BUFF;
+					sprintf((char*)_BUFF, "Error parsing: %s ", _options);
+					logger.Log(ig::settings::ERROR, _BUFF);
+				}
+				rapidjson::Value* VAL = new rapidjson::Value();
+				*VAL = DOC["configure_timeout"];
+				const char* _configure_timeout = VAL->GetString();
+				if (Response.status_code == 200)
+				{
+					for (unsigned int _i = 0; _i < 4; ++_i)
+					{
+						if (_configure_timeout)
+						{
+							Utility.SLEEP(atoll(_configure_timeout));
+							if (configure_photo(_upload_id, _photo, _caption))
+							{
+								const char* __media = last_json.get("media");
+								expose();
+								VAL->Empty();
+								if (DOC.HasMember("rename"))
+								{
+									const char* _rename;
+									sprintf((char*)_rename, "%s_REMOVE_ME", _photo);
+									rename(_photo, _rename);
+								}
+								media = __media;
+							}
+						}
+					}
+				}
+				return false;
+				delete VAL;
+			}
 
-				const char* _configure_timeout = 
+			template<typename T>
+			std::pair<T, T> Photo<T>::get_image_size(T _fname)
+			{
+			}
+
+			template<>
+			std::pair<const char*, const char*> Photo<const char*>::get_image_size(const char* _fname)
+			{
+				_FILE = fopen(_fname, "rb");
+				const char* _head;
+				fread((char*)_head, sizeof(char), 24, _FILE);
+				if (sizeof(_head) != 24)
+				{
+					std::runtime_error("Invalid Header");
+				}
+				cv::Mat _image = imread(_fname);
+				unsigned int _width, _height;
+				std::pair<const char*, const char*> _image_size;
+				char* _name = strtok((char*)_fname, ".");
+				char* _ext = strtok(0, ".");
+				_width = _image.size().width;
+				_height = _image.size().height;
+				_image_size = std::make_pair(_width, _height);
+				return _image_size;
+				if (_ext == "png")
+				{
+					
+				}
+				else if (_ext == "gif")
+				{
+
+				}
+				else if (_ext == "jpeg")
+				{
+
+				}
+				else if (_ext == "jpg")
+				{
+
+				}
+				else
+				{
+					std::runtime_error("Unsupported format");
+				}
 			}
 
 

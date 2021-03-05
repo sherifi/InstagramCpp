@@ -353,6 +353,23 @@ namespace ig
 				result[i] = '\0';
 				return result;
 			}
+
+			template<typename T>
+			void Utility<T>::SLEEP(time_t _seconds)
+			{
+			}
+
+			template<>
+			void Utility<const char*>::SLEEP(time_t _seconds)
+			{
+				time_t _start = std::time(0);
+				time_t _end = _start + _seconds;
+				while (_end != _start)
+				{
+					_start = std::time(0);
+				}
+			}
+
 		} //utility
 	} //settings
 } //ig

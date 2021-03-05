@@ -2,6 +2,10 @@
 
 #include "ig_api.h"
 
+#include <rapidjson/rapidjson.h>
+#include <rapidjson/document.h>
+#include <rapidjson/stringbuffer.h>
+
 #include <string>
 #include <map>
 #include <cstdio>
@@ -21,10 +25,10 @@ namespace ig
 				~Photo();
 				//Main functions section
 				bool download_photo(T _media_id, T _filename, bool _media = false, T _folder = "photos");
-				bool compatible_spect_ratio(std::pair<T, T> _size);
-				void configure_photo(T _upload_id , T _photo, T _caption);
+				bool compatible_aspect_ratio(std::pair<T, T> _size);
+				bool configure_photo(T _upload_id , T _photo, T _caption);
 				bool upload_photo(T _photo, T _caption, T _upload_id, bool _from_video = false, bool _force_resize = false, T _options = NULL_str);
-				void get_image_size(T _fname);
+				std::pair<T, T> get_image_size(T _fname);
 				void resize_image(T _fname);
 				void stories_shaper(T _fname);
 				//Getter and Setter
@@ -49,7 +53,7 @@ namespace ig
 				Response<T> Response;
 				T DATA;
 				rapidjson::Document DOC;
-				rapidjson::Value VAL;
+				ig::settings::utility::Utility<T> Utility;
 			};
 		}
 	}

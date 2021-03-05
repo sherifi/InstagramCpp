@@ -66,6 +66,7 @@ namespace ig
 				std::map<T, T> get_cookie_dict();
 				std::map<T, T> default_data();
 				std::map<T, T> _prepare_recipients(T _users[USER_VEC_SIZE], T _thread_id = NULL_str, bool _use_quotes = false);
+				void SLEEP(time_t _seconds);
 			private:
 				T token;
 				T user_id;
